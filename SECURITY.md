@@ -15,4 +15,7 @@ Do not publish or distribute a binary, or operate this as a multi-user service, 
 
 ## Reporting
 
-For a public fork, enable private vulnerability reporting in GitHub and document its URL here before accepting external users.
+Report vulnerabilities through
+[GitHub private vulnerability reporting](https://github.com/UniqJade/Margin/security/advisories/new).
+Do not open a public issue containing a vulnerability, API key, private book
+excerpt, provider response, signing file, or populated local configuration.

@@ -45,3 +45,6 @@ releases. Margin does not currently distribute public application binaries.
   Natural Translation.
 - iPhone/iPad Apple Books selection delivery remains unverified on physical
   devices.
+
+[Unreleased]: https://github.com/UniqJade/Margin/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/UniqJade/Margin/releases/tag/v0.1.0
