@@ -42,11 +42,7 @@ jobs:
         run: node --test Evaluation/tests/*.test.cjs
 
       - name: Verify generated project is deterministic
-        run: |
-          xcodegen generate
-          git diff --exit-code -- BooksTranslator.xcodeproj
-          xcodegen generate
-          git diff --exit-code -- BooksTranslator.xcodeproj
+        run: ./scripts/verify-xcodegen-determinism.sh
 
       - name: Test shared Swift packages
         run: swift test

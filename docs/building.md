@@ -171,14 +171,14 @@ works with every free or paid developer-account configuration.
 `project.yml` is the source of truth for the Xcode project. After changing it:
 
 ```bash
-xcodegen generate
-git diff -- BooksTranslator.xcodeproj
-xcodegen generate
-git diff --exit-code -- BooksTranslator.xcodeproj
+./scripts/verify-xcodegen-determinism.sh
 ```
 
-The second generation must not drift. Do not hand-edit a generated signing value
-or source list without also changing `project.yml`.
+The second generation must not drift. The checked-in project can have a
+folder-name-only package-reference difference when the repository directory is
+renamed, so the script compares two consecutive generations in the current
+checkout. Do not hand-edit a generated signing value or source list without also
+changing `project.yml`.
 
 ## Release checks
 
