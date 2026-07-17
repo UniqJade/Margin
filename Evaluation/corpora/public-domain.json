@@ -1,0 +1,374 @@
+{
+  "schemaVersion": 1,
+  "corpus": {
+    "id": "margin-public-domain-held-out-v1",
+    "title": "Margin v0.1.0 public-domain held-out corpus",
+    "purpose": "Twenty-eight source-only passages locked before candidate generation for the private Apple Books versus DeepSeek blind evaluation. This file contains no provider output.",
+    "items": [
+      {
+        "id": "pd-douglass-01",
+        "workId": "gutenberg-23",
+        "category": "biography-history",
+        "chapter": "Chapter I",
+        "text": "I was born in Tuckahoe, near Hillsborough, and about twelve miles from Easton, in Talbot county, Maryland. I have no accurate knowledge of my age, never having seen any authentic record containing it. By far the larger part of the slaves know as little of their ages as horses know of theirs, and it is the wish of most masters within my knowledge to keep their slaves thus ignorant.",
+        "attribution": {
+          "title": "Narrative of the Life of Frederick Douglass, an American Slave",
+          "creator": "Frederick Douglass",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/23/pg23.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 23"
+        }
+      },
+      {
+        "id": "pd-douglass-02",
+        "workId": "gutenberg-23",
+        "category": "biography-history",
+        "chapter": "Chapter VI",
+        "text": "These words sank deep into my heart, stirred up sentiments within that lay slumbering, and called into existence an entirely new train of thought. It was a new and special revelation, explaining dark and mysterious things, with which my youthful understanding had struggled, but struggled in vain. I now understood what had been to me a most perplexing difficulty—to wit, the white man’s power to enslave the black man.",
+        "attribution": {
+          "title": "Narrative of the Life of Frederick Douglass, an American Slave",
+          "creator": "Frederick Douglass",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/23/pg23.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 23"
+        }
+      },
+      {
+        "id": "pd-douglass-03",
+        "workId": "gutenberg-23",
+        "category": "biography-history",
+        "chapter": "Chapter VII",
+        "text": "The plan which I adopted, and the one by which I was most successful, was that of making friends of all the little white boys whom I met in the street. As many of these as I could, I converted into teachers. With their kindly aid, obtained at different times and in different places, I finally succeeded in learning to read.",
+        "attribution": {
+          "title": "Narrative of the Life of Frederick Douglass, an American Slave",
+          "creator": "Frederick Douglass",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/23/pg23.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 23"
+        }
+      },
+      {
+        "id": "pd-douglass-04",
+        "workId": "gutenberg-23",
+        "category": "biography-history",
+        "chapter": "Chapter X",
+        "text": "You have seen how a man was made a slave; you shall see how a slave was made a man. On one of the hottest days of the month of August, 1833, Bill Smith, William Hughes, a slave named Eli, and myself, were engaged in fanning wheat. Hughes was clearing the fanned wheat from before the fan. Eli was turning, Smith was feeding, and I was carrying wheat to the fan.",
+        "attribution": {
+          "title": "Narrative of the Life of Frederick Douglass, an American Slave",
+          "creator": "Frederick Douglass",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/23/pg23.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 23"
+        }
+      },
+      {
+        "id": "pd-franklin-01",
+        "workId": "gutenberg-148",
+        "category": "biography-history",
+        "chapter": "Autobiography, first section (1771)",
+        "text": "From a child I was fond of reading, and all the little money that came into my hands was ever laid out in books. Pleased with the Pilgrim's Progress, my first collection was of John Bunyan's works in separate little volumes. I afterward sold them to enable me to buy R. Burton's Historical Collections; they were small chapmen's books, and cheap, 40 or 50 in all.",
+        "attribution": {
+          "title": "The Autobiography of Benjamin Franklin",
+          "creator": "Benjamin Franklin",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/148/pg148.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 148"
+        }
+      },
+      {
+        "id": "pd-franklin-02",
+        "workId": "gutenberg-148",
+        "category": "biography-history",
+        "chapter": "Autobiography, first section (1771)",
+        "text": "About this time I met with an odd volume of the Spectator. It was the third. I had never before seen any of them. I bought it, read it over and over, and was much delighted with it.",
+        "attribution": {
+          "title": "The Autobiography of Benjamin Franklin",
+          "creator": "Benjamin Franklin",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/148/pg148.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 148"
+        }
+      },
+      {
+        "id": "pd-franklin-03",
+        "workId": "gutenberg-148",
+        "category": "news-general-nonfiction",
+        "chapter": "Continuation begun at Passy (1784)",
+        "text": "It was about this time I conceiv'd the bold and arduous project of arriving at moral perfection. I wish'd to live without committing any fault at any time; I would conquer all that either natural inclination, custom, or company might lead me into. As I knew, or thought I knew, what was right and wrong, I did not see why I might not always do the one and avoid the other.",
+        "attribution": {
+          "title": "The Autobiography of Benjamin Franklin",
+          "creator": "Benjamin Franklin",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/148/pg148.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 148"
+        }
+      },
+      {
+        "id": "pd-franklin-04",
+        "workId": "gutenberg-148",
+        "category": "news-general-nonfiction",
+        "chapter": "Continuation begun at Passy (1784)",
+        "text": "In reality, there is, perhaps, no one of our natural passions so hard to subdue as pride. Disguise it, struggle with it, beat it down, stifle it, mortify it as much as one pleases, it is still alive, and will every now and then peep out and show itself; you will see it, perhaps, often in this history; for, even if I could conceive that I had compleatly overcome it, I should probably be proud of my humility.",
+        "attribution": {
+          "title": "The Autobiography of Benjamin Franklin",
+          "creator": "Benjamin Franklin",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/148/pg148.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 148"
+        }
+      },
+      {
+        "id": "pd-austen-01",
+        "workId": "gutenberg-1342",
+        "category": "fiction-dialogue",
+        "chapter": "Chapter I",
+        "text": "It is a truth universally acknowledged, that a single man in possession of a good fortune must be in want of a wife. However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered as the rightful property of some one or other of their daughters.",
+        "attribution": {
+          "title": "Pride and Prejudice",
+          "creator": "Jane Austen",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/1342/pg1342.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 1342"
+        }
+      },
+      {
+        "id": "pd-austen-02",
+        "workId": "gutenberg-1342",
+        "category": "fiction-dialogue",
+        "chapter": "Chapter III",
+        "text": "“I would not be so fastidious as you are,” cried Bingley, “for a kingdom! Upon my honour, I never met with so many pleasant girls in my life as I have this evening; and there are several of them, you see, uncommonly pretty.” “You are dancing with the only handsome girl in the room,” said Mr. Darcy, looking at the eldest Miss Bennet.",
+        "attribution": {
+          "title": "Pride and Prejudice",
+          "creator": "Jane Austen",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/1342/pg1342.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 1342"
+        }
+      },
+      {
+        "id": "pd-austen-03",
+        "workId": "gutenberg-1342",
+        "category": "fiction-dialogue",
+        "chapter": "Chapter IV",
+        "text": "When Jane and Elizabeth were alone, the former, who had been cautious in her praise of Mr. Bingley before, expressed to her sister how very much she admired him. “He is just what a young-man ought to be,” said she, “sensible, good-humoured, lively; and I never saw such happy manners! so much ease, with such perfect good breeding!”",
+        "attribution": {
+          "title": "Pride and Prejudice",
+          "creator": "Jane Austen",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/1342/pg1342.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 1342"
+        }
+      },
+      {
+        "id": "pd-austen-04",
+        "workId": "gutenberg-1342",
+        "category": "fiction-dialogue",
+        "chapter": "Chapter LVIII",
+        "text": "Elizabeth was too much embarrassed to say a word. After a short pause, her companion added, “You are too generous to trifle with me. If your feelings are still what they were last April, tell me so at once. My affections and wishes are unchanged; but one word from you will silence me on this subject for ever.”",
+        "attribution": {
+          "title": "Pride and Prejudice",
+          "creator": "Jane Austen",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/1342/pg1342.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 1342"
+        }
+      },
+      {
+        "id": "pd-carroll-01",
+        "workId": "gutenberg-11",
+        "category": "fiction-dialogue",
+        "chapter": "Chapter VI: Pig and Pepper",
+        "text": "“Cheshire Puss,” she began, rather timidly, as she did not at all know whether it would like the name: however, it only grinned a little wider. “Come, it’s pleased so far,” thought Alice, and she went on. “Would you tell me, please, which way I ought to go from here?” “That depends a good deal on where you want to get to,” said the Cat.",
+        "attribution": {
+          "title": "Alice’s Adventures in Wonderland",
+          "creator": "Lewis Carroll",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/11/pg11.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 11"
+        }
+      },
+      {
+        "id": "pd-carroll-02",
+        "workId": "gutenberg-11",
+        "category": "fiction-dialogue",
+        "chapter": "Chapter VI: Pig and Pepper",
+        "text": "“But I don’t want to go among mad people,” Alice remarked. “Oh, you can’t help that,” said the Cat: “we’re all mad here. I’m mad. You’re mad.”",
+        "attribution": {
+          "title": "Alice’s Adventures in Wonderland",
+          "creator": "Lewis Carroll",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/11/pg11.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 11"
+        }
+      },
+      {
+        "id": "pd-carroll-03",
+        "workId": "gutenberg-11",
+        "category": "idiom-ambiguity-complex-syntax",
+        "chapter": "Chapter I: Down the Rabbit-Hole",
+        "text": "“What a curious feeling!” said Alice; “I must be shutting up like a telescope.” And so it was indeed: she was now only ten inches high, and her face brightened up at the thought that she was now the right size for going through the little door into that lovely garden.",
+        "attribution": {
+          "title": "Alice’s Adventures in Wonderland",
+          "creator": "Lewis Carroll",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/11/pg11.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 11"
+        }
+      },
+      {
+        "id": "pd-carroll-04",
+        "workId": "gutenberg-11",
+        "category": "idiom-ambiguity-complex-syntax",
+        "chapter": "Chapter III: A Caucus-Race and a Long Tale",
+        "text": "“You promised to tell me your history, you know,” said Alice, “and why it is you hate—C and D,” she added in a whisper, half afraid that it would be offended again. “Mine is a long and a sad tale!” said the Mouse, turning to Alice, and sighing. “It is a long tail, certainly,” said Alice, looking down with wonder at the Mouse’s tail; “but why do you call it sad?”",
+        "attribution": {
+          "title": "Alice’s Adventures in Wonderland",
+          "creator": "Lewis Carroll",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/11/pg11.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 11"
+        }
+      },
+      {
+        "id": "pd-federalist-01",
+        "workId": "gutenberg-1404",
+        "category": "news-general-nonfiction",
+        "chapter": "Federalist No. 1",
+        "text": "AFTER an unequivocal experience of the inefficacy of the subsisting federal government, you are called upon to deliberate on a new Constitution for the United States of America. The subject speaks its own importance; comprehending in its consequences nothing less than the existence of the UNION, the safety and welfare of the parts of which it is composed, the fate of an empire in many respects the most interesting in the world.",
+        "attribution": {
+          "title": "The Federalist Papers",
+          "creator": "Alexander Hamilton, John Jay, and James Madison",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/1404/pg1404.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 1404"
+        }
+      },
+      {
+        "id": "pd-federalist-02",
+        "workId": "gutenberg-1404",
+        "category": "news-general-nonfiction",
+        "chapter": "Federalist No. 10",
+        "text": "It could never be more truly said than of the first remedy, that it was worse than the disease. Liberty is to faction what air is to fire, an aliment without which it instantly expires. But it could not be less folly to abolish liberty, which is essential to political life, because it nourishes faction, than it would be to wish the annihilation of air, which is essential to animal life, because it imparts to fire its destructive agency.",
+        "attribution": {
+          "title": "The Federalist Papers",
+          "creator": "Alexander Hamilton, John Jay, and James Madison",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/1404/pg1404.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 1404"
+        }
+      },
+      {
+        "id": "pd-federalist-03",
+        "workId": "gutenberg-1404",
+        "category": "news-general-nonfiction",
+        "chapter": "Federalist No. 51",
+        "text": "If men were angels, no government would be necessary. If angels were to govern men, neither external nor internal controls on government would be necessary. In framing a government which is to be administered by men over men, the great difficulty lies in this: you must first enable the government to control the governed; and in the next place oblige it to control itself.",
+        "attribution": {
+          "title": "The Federalist Papers",
+          "creator": "Alexander Hamilton, John Jay, and James Madison",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/1404/pg1404.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 1404"
+        }
+      },
+      {
+        "id": "pd-federalist-04",
+        "workId": "gutenberg-1404",
+        "category": "news-general-nonfiction",
+        "chapter": "Federalist No. 70",
+        "text": "There can be no need, however, to multiply arguments or examples on this head. A feeble Executive implies a feeble execution of the government. A feeble execution is but another phrase for a bad execution; and a government ill executed, whatever it may be in theory, must be, in practice, a bad government.",
+        "attribution": {
+          "title": "The Federalist Papers",
+          "creator": "Alexander Hamilton, John Jay, and James Madison",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/1404/pg1404.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 1404"
+        }
+      },
+      {
+        "id": "pd-darwin-01",
+        "workId": "gutenberg-22764",
+        "category": "news-general-nonfiction",
+        "chapter": "Chapter I: Variation under Domestication",
+        "text": "When we look to the individuals of the same variety or sub-variety of our older cultivated plants and animals, one of the first points which strikes us, is, that they generally differ more from each other than do the individuals of any one species or variety in a state of nature. When we reflect on the vast diversity of the plants and animals which have been cultivated, and which have varied during all ages under the most different climates and treatment, I think we are driven to conclude that this great variability is simply due to our domestic productions having been raised under conditions of life not so uniform as, and somewhat different from, those to which the parent-species have been exposed under nature. There is also, I think, some probability in the view propounded by Andrew Knight, that this variability may be partly connected with excess of food.",
+        "attribution": {
+          "title": "On the Origin of Species by Means of Natural Selection",
+          "creator": "Charles Darwin",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/22764/pg22764.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 22764"
+        }
+      },
+      {
+        "id": "pd-darwin-02",
+        "workId": "gutenberg-22764",
+        "category": "news-general-nonfiction",
+        "chapter": "Chapter III: Struggle for Existence",
+        "text": "I should premise that I use the term Struggle for Existence in a large and metaphorical sense, including dependence of one being on another, and including (which is more important) not only the life of the individual, but success in leaving progeny. Two canine animals in a time of dearth, may be truly said to struggle with each other which shall get food and live. But a plant on the edge of a desert is said to struggle for life against the drought, though more properly it should be said to be dependent on the moisture.",
+        "attribution": {
+          "title": "On the Origin of Species by Means of Natural Selection",
+          "creator": "Charles Darwin",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/22764/pg22764.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 22764"
+        }
+      },
+      {
+        "id": "pd-darwin-03",
+        "workId": "gutenberg-22764",
+        "category": "news-general-nonfiction",
+        "chapter": "Chapter IV: Natural Selection",
+        "text": "It may metaphorically be said that natural selection is daily and hourly scrutinising, throughout the world, every variation, even the slightest; rejecting that which is bad, preserving and adding up all that is good; silently and insensibly working, whenever and wherever opportunity offers, at the improvement of each organic being in relation to its organic and inorganic conditions of life. We see nothing of these slow changes in progress, until the hand of time has marked the long lapse of ages, and then so imperfect is our view into long past geological ages, that we only see that the forms of life are now different from what they formerly were.",
+        "attribution": {
+          "title": "On the Origin of Species by Means of Natural Selection",
+          "creator": "Charles Darwin",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/22764/pg22764.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 22764"
+        }
+      },
+      {
+        "id": "pd-darwin-04",
+        "workId": "gutenberg-22764",
+        "category": "news-general-nonfiction",
+        "chapter": "Chapter XIV: Recapitulation and Conclusion",
+        "text": "A broken or interrupted range may often be accounted for by the extinction of the species in the intermediate regions. It cannot be denied that we are as yet very ignorant of the full extent of the various climatal and geographical changes which have affected the earth during modern periods; and such changes will obviously have greatly facilitated migration.",
+        "attribution": {
+          "title": "On the Origin of Species by Means of Natural Selection",
+          "creator": "Charles Darwin",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/22764/pg22764.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 22764"
+        }
+      },
+      {
+        "id": "pd-dickens-01",
+        "workId": "gutenberg-98",
+        "category": "idiom-ambiguity-complex-syntax",
+        "chapter": "Book the First, Chapter I: The Period",
+        "text": "There were a king with a large jaw and a queen with a plain face, on the throne of England; there were a king with a large jaw and a queen with a fair face, on the throne of France. In both countries it was clearer than crystal to the lords of the State preserves of loaves and fishes, that things in general were settled for ever.",
+        "attribution": {
+          "title": "A Tale of Two Cities",
+          "creator": "Charles Dickens",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/98/pg98.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 98"
+        }
+      },
+      {
+        "id": "pd-dickens-02",
+        "workId": "gutenberg-98",
+        "category": "idiom-ambiguity-complex-syntax",
+        "chapter": "Book the First, Chapter III: The Night Shadows",
+        "text": "A solemn consideration, when I enter a great city by night, that every one of those darkly clustered houses encloses its own secret; that every room in every one of them encloses its own secret; that every beating heart in the hundreds of thousands of breasts there, is, in some of its imaginings, a secret to the heart nearest it! Something of the awfulness, even of Death itself, is referable to this.",
+        "attribution": {
+          "title": "A Tale of Two Cities",
+          "creator": "Charles Dickens",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/98/pg98.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 98"
+        }
+      },
+      {
+        "id": "pd-dickens-03",
+        "workId": "gutenberg-98",
+        "category": "idiom-ambiguity-complex-syntax",
+        "chapter": "Book the Second, Chapter VII: Monseigneur in Town",
+        "text": "The leprosy of unreality disfigured every human creature in attendance upon Monseigneur. In the outermost room were half a dozen exceptional people who had had, for a few years, some vague misgiving in them that things in general were going rather wrong.",
+        "attribution": {
+          "title": "A Tale of Two Cities",
+          "creator": "Charles Dickens",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/98/pg98.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 98"
+        }
+      },
+      {
+        "id": "pd-dickens-04",
+        "workId": "gutenberg-98",
+        "category": "idiom-ambiguity-complex-syntax",
+        "chapter": "Book the Third, Chapter XV: The Footsteps Die Out For Ever",
+        "text": "I see him winning it so well, that my name is made illustrious there by the light of his. I see the blots I threw upon it, faded away. I see him, fore-most of just judges and honoured men, bringing a boy of my name, with a forehead that I know and golden hair, to this place--then fair to look upon, with not a trace of this day’s disfigurement--and I hear him tell the child my story, with a tender and a faltering voice.",
+        "attribution": {
+          "title": "A Tale of Two Cities",
+          "creator": "Charles Dickens",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/98/pg98.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 98"
+        }
+      }
+    ]
+  }
+}

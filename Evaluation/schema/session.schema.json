@@ -1,0 +1,284 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "margin-evaluation-session-v2",
+  "title": "Margin blind evaluation dataset",
+  "oneOf": [
+    { "$ref": "#/$defs/datasetV1" },
+    { "$ref": "#/$defs/datasetV2" },
+    { "$ref": "#/$defs/datasetV3" }
+  ],
+  "$defs": {
+    "datasetV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "dataset"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "dataset": { "$ref": "#/$defs/datasetBodyV1" }
+      }
+    },
+    "datasetV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "dataset"],
+      "properties": {
+        "schemaVersion": { "const": 2 },
+        "dataset": { "$ref": "#/$defs/datasetBodyV2" }
+      }
+    },
+    "datasetV3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "dataset"],
+      "properties": {
+        "schemaVersion": { "const": 3 },
+        "dataset": { "$ref": "#/$defs/datasetBodyV3" }
+      }
+    },
+    "datasetBodyV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "createdAt", "cases"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "createdAt": { "type": "string", "minLength": 1 },
+        "cases": { "$ref": "#/$defs/casesV1V2" }
+      }
+    },
+    "datasetBodyV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "createdAt", "metadata", "cases"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "createdAt": { "type": "string", "minLength": 1 },
+        "metadata": { "$ref": "#/$defs/metadataV2" },
+        "cases": { "$ref": "#/$defs/casesV1V2" }
+      }
+    },
+    "datasetBodyV3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "createdAt", "metadata", "cases"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "createdAt": { "type": "string", "minLength": 1 },
+        "metadata": { "$ref": "#/$defs/metadataV3" },
+        "cases": { "$ref": "#/$defs/casesV3" }
+      }
+    },
+    "metadataV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "corpusHash",
+        "marginCommit",
+        "providerModel",
+        "promptContractVersion",
+        "appleBaseline",
+        "caseCounts"
+      ],
+      "properties": {
+        "corpusHash": { "type": "string", "minLength": 1 },
+        "marginCommit": { "type": "string", "minLength": 1 },
+        "providerModel": { "type": "string", "minLength": 1 },
+        "promptContractVersion": { "type": "string", "minLength": 1 },
+        "appleBaseline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["macOSVersion", "booksVersion", "locale"],
+          "properties": {
+            "macOSVersion": { "type": "string", "minLength": 1 },
+            "booksVersion": { "type": "string", "minLength": 1 },
+            "locale": { "type": "string", "minLength": 1 }
+          }
+        },
+        "caseCounts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["private", "publicDomain", "total"],
+          "properties": {
+            "private": { "type": "integer", "minimum": 0 },
+            "publicDomain": { "type": "integer", "minimum": 0 },
+            "total": { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    },
+    "metadataV3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "corpusHash",
+        "marginCommit",
+        "providerModel",
+        "promptContractVersion",
+        "normalization",
+        "appleBaseline",
+        "caseCounts"
+      ],
+      "properties": {
+        "corpusHash": { "type": "string", "minLength": 1 },
+        "marginCommit": { "type": "string", "minLength": 1 },
+        "providerModel": { "type": "string", "minLength": 1 },
+        "promptContractVersion": { "type": "string", "minLength": 1 },
+        "normalization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["contractVersion", "scriptConverter", "targetLanguage"],
+          "properties": {
+            "contractVersion": { "type": "string", "minLength": 1 },
+            "scriptConverter": { "type": "string", "minLength": 1 },
+            "targetLanguage": { "const": "zh-Hans-CN" }
+          }
+        },
+        "appleBaseline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["macOSVersion", "booksVersion", "locale"],
+          "properties": {
+            "macOSVersion": { "type": "string", "minLength": 1 },
+            "booksVersion": { "type": "string", "minLength": 1 },
+            "locale": { "type": "string", "minLength": 1 }
+          }
+        },
+        "caseCounts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["private", "publicDomain", "total"],
+          "properties": {
+            "private": { "type": "integer", "minimum": 0 },
+            "publicDomain": { "type": "integer", "minimum": 0 },
+            "total": { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    },
+    "casesV1V2": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/caseV1V2" }
+    },
+    "casesV3": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/caseV3" }
+    },
+    "attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "creator", "sourceURL", "license"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "creator": { "type": "string", "minLength": 1 },
+        "sourceURL": { "type": "string" },
+        "license": { "type": "string", "minLength": 1 }
+      }
+    },
+    "candidateV1V2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1 }
+      }
+    },
+    "normalizationFlags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "whitespaceAdjusted",
+        "scriptConverted",
+        "quoteGlyphsAdjusted",
+        "outerQuoteAdjusted"
+      ],
+      "properties": {
+        "whitespaceAdjusted": { "type": "boolean" },
+        "scriptConverted": { "type": "boolean" },
+        "quoteGlyphsAdjusted": { "type": "boolean" },
+        "outerQuoteAdjusted": { "type": "boolean" }
+      }
+    },
+    "candidateV3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rawText", "displayText", "normalization"],
+      "properties": {
+        "rawText": { "type": "string", "minLength": 1 },
+        "displayText": { "type": "string", "minLength": 1 },
+        "normalization": { "$ref": "#/$defs/normalizationFlags" }
+      }
+    },
+    "caseV1V2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "category", "source", "candidates"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "category": {
+          "enum": [
+            "biography-history",
+            "fiction-dialogue",
+            "news-general-nonfiction",
+            "idiom-ambiguity-complex-syntax"
+          ]
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["text", "attribution"],
+          "properties": {
+            "text": { "type": "string", "minLength": 1 },
+            "attribution": { "$ref": "#/$defs/attribution" }
+          }
+        },
+        "candidates": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["apple", "deepseek"],
+          "properties": {
+            "apple": { "$ref": "#/$defs/candidateV1V2" },
+            "deepseek": { "$ref": "#/$defs/candidateV1V2" }
+          }
+        }
+      }
+    },
+    "caseV3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "category", "source", "candidates"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "category": {
+          "enum": [
+            "biography-history",
+            "fiction-dialogue",
+            "news-general-nonfiction",
+            "idiom-ambiguity-complex-syntax"
+          ]
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["text", "attribution"],
+          "properties": {
+            "text": { "type": "string", "minLength": 1 },
+            "attribution": { "$ref": "#/$defs/attribution" }
+          }
+        },
+        "candidates": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["apple", "deepseek"],
+          "properties": {
+            "apple": { "$ref": "#/$defs/candidateV3" },
+            "deepseek": { "$ref": "#/$defs/candidateV3" }
+          }
+        }
+      }
+    }
+  }
+}

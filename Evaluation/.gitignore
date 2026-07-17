@@ -1,0 +1,6 @@
+private/*
+!private/README.md
+results/*
+!results/README.md
+*.local.json
+*.private.json

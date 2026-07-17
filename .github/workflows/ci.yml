@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Public source validation
+    runs-on: macos-26
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Record toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+          node --version
+          xcodegen --version
+
+      - name: Audit public repository
+        run: |
+          git diff --check
+          ./scripts/audit-public-repo.sh
+          ./Tests/Scripts/public_hygiene_tests.sh
+
+      - name: Test evaluator
+        run: node --test Evaluation/tests/*.test.cjs
+
+      - name: Verify generated project is deterministic
+        run: |
+          xcodegen generate
+          git diff --exit-code -- BooksTranslator.xcodeproj
+          xcodegen generate
+          git diff --exit-code -- BooksTranslator.xcodeproj
+
+      - name: Test shared Swift packages
+        run: swift test
+
+      - name: Test hosted Mac app
+        run: ./scripts/test-mac.sh
+
+      - name: Build iOS app and Action Extension
+        run: |
+          xcodebuild \
+            -project BooksTranslator.xcodeproj \
+            -scheme BooksTranslatorIOS \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -derivedDataPath .build/XcodeDerivedData-iOS.noindex \
+            CODE_SIGNING_ALLOWED=NO \
+            build

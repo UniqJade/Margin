@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+  >
+  <meta name="color-scheme" content="light dark">
+  <title>Margin Translation Proof</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="margin-rail" aria-label="Evaluation progress">
+      <a class="wordmark" href="#top" aria-label="Margin evaluation home">
+        <span class="wordmark-mark" aria-hidden="true"></span>
+        <span>Margin</span>
+      </a>
+      <div class="rail-progress" aria-hidden="true">
+        <span id="rail-fill"></span>
+      </div>
+      <p class="rail-count" id="rail-count">No set loaded</p>
+      <p class="rail-note">Local-only<br>blind reading</p>
+    </aside>
+
+    <main id="top">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Translation proof · A/B</p>
+          <h1>Judge the sentence,<br><em>not the provider.</em></h1>
+        </div>
+        <button id="clear-progress" class="quiet-button" type="button" hidden>Clear local data</button>
+      </header>
+
+      <section id="notice" class="notice" role="status" aria-live="polite" hidden></section>
+
+      <section id="import-view" class="import-view" aria-labelledby="import-title">
+        <div class="import-copy">
+          <p class="section-index">Before you read</p>
+          <h2 id="import-title">Bring a prepared comparison set.</h2>
+          <p>
+            Margin randomizes Apple and DeepSeek as A and B. The page makes no
+            network requests; progress remains in this browser until you clear it.
+            Formal sets show both providers through the same Simplified Chinese
+            typography contract, while preserving raw output for the final reveal.
+          </p>
+          <ol class="plain-steps">
+            <li>Prepare translations in the documented JSON format.</li>
+            <li>Score every passage without inspecting the file.</li>
+            <li>Finalize once. Provider names are then revealed and locked.</li>
+          </ol>
+        </div>
+        <div class="import-card">
+          <label class="file-picker" for="dataset-file">
+            <span class="file-picker-title">Choose evaluation JSON</span>
+            <span class="file-picker-help">Nothing leaves this Mac.</span>
+          </label>
+          <input id="dataset-file" type="file" accept="application/json,.json">
+          <a class="text-link" href="fixtures/demo-session.json" download>
+            Download the self-authored demo set
+          </a>
+          <p class="fine-print">
+            Prepared files contain provider labels. Keep them private and do not
+            open them while scoring.
+          </p>
+        </div>
+      </section>
+
+      <section id="evaluation-view" hidden>
+        <div class="evaluation-heading">
+          <div>
+            <p class="section-index" id="case-category"></p>
+            <h2 id="case-position"></h2>
+          </div>
+          <p class="saved-status" id="saved-status"></p>
+        </div>
+
+        <article class="source-card">
+          <p class="card-label">English source</p>
+          <blockquote id="source-text"></blockquote>
+          <p class="source-credit" id="source-credit"></p>
+        </article>
+
+        <div class="candidate-grid" aria-label="Anonymous candidate translations">
+          <article class="candidate-card">
+            <p class="candidate-letter">A</p>
+            <p id="candidate-a" lang="zh-Hans"></p>
+          </article>
+          <article class="candidate-card">
+            <p class="candidate-letter">B</p>
+            <p id="candidate-b" lang="zh-Hans"></p>
+          </article>
+        </div>
+
+        <aside id="key-ledger" class="key-ledger" aria-label="Keyboard scoring reference">
+          <p class="key-ledger-title">Proofreader’s key ledger</p>
+          <dl>
+            <div><dt><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></dt><dd>A · Equal · B</dd></div>
+            <div><dt><kbd>4</kbd></dt><dd>N/A on ambiguity</dd></div>
+            <div><dt><kbd>Tab</kbd></dt><dd>Next judgment</dd></div>
+            <div><dt><kbd>M</kbd></dt><dd>Cycle major error</dd></div>
+            <div><dt><kbd>Enter</kbd></dt><dd>File score &amp; next</dd></div>
+          </dl>
+        </aside>
+
+        <form id="score-form" class="score-sheet">
+          <fieldset data-question="accuracy" tabindex="0" aria-describedby="accuracy-help">
+            <legend>Which is more accurate?</legend>
+            <p class="question-help" id="accuracy-help">Consider facts, negation, reference, time, and causal direction.</p>
+            <div class="choice-row">
+              <label><input type="radio" name="accuracy" value="A" tabindex="-1"><span>A</span></label>
+              <label><input type="radio" name="accuracy" value="tie" tabindex="-1"><span>Equal</span></label>
+              <label><input type="radio" name="accuracy" value="B" tabindex="-1"><span>B</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question="naturalness" tabindex="0" aria-describedby="naturalness-help">
+            <legend>Which reads more naturally?</legend>
+            <p class="question-help" id="naturalness-help">Choose the Chinese you would expect in careful published prose.</p>
+            <div class="choice-row">
+              <label><input type="radio" name="naturalness" value="A" tabindex="-1"><span>A</span></label>
+              <label><input type="radio" name="naturalness" value="tie" tabindex="-1"><span>Equal</span></label>
+              <label><input type="radio" name="naturalness" value="B" tabindex="-1"><span>B</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question="ambiguity" tabindex="0" aria-describedby="ambiguity-help">
+            <legend>Which handles material ambiguity better?</legend>
+            <p class="question-help" id="ambiguity-help">Ignore harmless wording differences. Judge only ambiguity that changes meaning or tone.</p>
+            <div class="choice-row four-choices">
+              <label><input type="radio" name="ambiguity" value="A" tabindex="-1"><span>A</span></label>
+              <label><input type="radio" name="ambiguity" value="tie" tabindex="-1"><span>Equal</span></label>
+              <label><input type="radio" name="ambiguity" value="B" tabindex="-1"><span>B</span></label>
+              <label><input type="radio" name="ambiguity" value="not-applicable" tabindex="-1"><span>N/A</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset data-question="preference" tabindex="0" aria-describedby="preference-help">
+            <legend>Which would you rather see while reading?</legend>
+            <p class="question-help" id="preference-help">Make one overall judgment after accuracy and naturalness.</p>
+            <div class="choice-row">
+              <label><input type="radio" name="preference" value="A" tabindex="-1"><span>A</span></label>
+              <label><input type="radio" name="preference" value="tie" tabindex="-1"><span>Equal</span></label>
+              <label><input type="radio" name="preference" value="B" tabindex="-1"><span>B</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset tabindex="0" aria-describedby="major-error-help major-error-status">
+            <legend>Major semantic error</legend>
+            <p class="question-help" id="major-error-help">Mark only a consequential error, not a stylistic preference. Press M to cycle none, A, B, or both.</p>
+            <div class="check-row">
+              <label><input type="checkbox" name="majorErrors" value="A" tabindex="-1"> Candidate A</label>
+              <label><input type="checkbox" name="majorErrors" value="B" tabindex="-1"> Candidate B</label>
+            </div>
+            <p id="major-error-status" class="visually-hidden" aria-live="polite"></p>
+          </fieldset>
+
+          <label class="note-field">
+            <span>Private note <small>optional</small></span>
+            <textarea name="note" rows="3" placeholder="Record why a meaning, tone, or reference failed."></textarea>
+          </label>
+
+          <div id="form-error" class="form-error" role="alert" hidden></div>
+          <div class="form-actions">
+            <button id="previous-case" class="secondary-button" type="button">Previous</button>
+            <button id="save-next" class="primary-button" type="submit">Save &amp; next</button>
+          </div>
+        </form>
+
+        <div class="finalize-strip">
+          <div>
+            <p class="card-label">One-way reveal</p>
+            <p id="finalize-help">Score every item to unlock finalization.</p>
+          </div>
+          <button id="finalize" class="reveal-button" type="button" disabled>Finalize &amp; reveal</button>
+        </div>
+      </section>
+
+      <section id="results-view" hidden>
+        <div class="results-heading">
+          <p class="section-index">Session finalized · identities revealed</p>
+          <h2>The blind is broken.</h2>
+          <p>Scores are locked. Export the detailed local record or a source-free public summary.</p>
+          <p id="release-gate" class="release-gate" aria-live="polite"></p>
+        </div>
+
+        <div id="metric-grid" class="metric-grid"></div>
+
+        <div class="export-panel">
+          <div>
+            <p class="card-label">Local detailed record</p>
+            <p>Contains original text, both translations, provider identities, notes, and scores.</p>
+            <div class="button-row">
+              <button id="export-detail-json" class="secondary-button" type="button">Detailed JSON</button>
+              <button id="export-detail-csv" class="secondary-button" type="button">Detailed CSV</button>
+            </div>
+          </div>
+          <div>
+            <p class="card-label">Public-safe summary</p>
+            <p>Contains aggregate counts and limitations. It excludes original and translated text.</p>
+            <button id="export-public-json" class="primary-button" type="button">Public summary JSON</button>
+          </div>
+        </div>
+
+        <div>
+          <p class="section-index">Case-by-case reveal</p>
+          <div id="reveal-list" class="reveal-list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="core.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

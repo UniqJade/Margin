@@ -1,0 +1,189 @@
+name: BooksTranslator
+options:
+  bundleIdPrefix: dev.example
+  developmentLanguage: en
+  deploymentTarget:
+    macOS: "15.0"
+    iOS: "18.0"
+  createIntermediateGroups: true
+packages:
+  BooksTranslatorCore:
+    path: .
+configFiles:
+  Debug: Config/BuildDefaults.xcconfig
+  Release: Config/BuildDefaults.xcconfig
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    GENERATE_INFOPLIST_FILE: NO
+    CODE_SIGN_STYLE: Automatic
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 0.1.0
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    DEVELOPMENT_TEAM: $(MARGIN_DEVELOPMENT_TEAM)
+targets:
+  BooksTranslatorMac:
+    type: application
+    platform: macOS
+    sources:
+      - Apps/SharedUI
+      - Apps/macOS
+      - Assets
+      - path: Resources/App
+        buildPhase: resources
+      - path: Resources/macOS
+        buildPhase: resources
+    dependencies:
+      - package: BooksTranslatorCore
+        product: LookupCore
+      - package: BooksTranslatorCore
+        product: ApplePlatformSupport
+    info:
+      path: Config/MacInfo.plist
+      properties:
+        CFBundleDisplayName: Margin
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        LSUIElement: false
+        NSHumanReadableCopyright: "Copyright © 2026. MIT licensed."
+        MarginMacKeychainService: "$(MARGIN_MAC_KEYCHAIN_SERVICE)"
+        NSServices:
+          - NSMenuItem:
+              default: Look Up with Margin
+            NSMessage: lookupSelection
+            NSPortName: Margin
+            NSRequiredContext: {}
+            NSRestricted: false
+            NSSendTypes:
+              - NSStringPboardType
+              - public.utf8-plain-text
+            NSReturnTypes: []
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        PRODUCT_BUNDLE_IDENTIFIER: $(MARGIN_MAC_BUNDLE_ID)
+        PRODUCT_NAME: Margin
+  BooksTranslatorMacTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - Tests/MacAppTests
+    dependencies:
+      - target: BooksTranslatorMac
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Margin.app/Contents/MacOS/Margin"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+  BooksTranslatorAction:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Apps/SharedUI
+      - Apps/ActionExtension
+      - path: Resources/App
+        buildPhase: resources
+      - path: Resources/ActionExtension
+        buildPhase: resources
+    dependencies:
+      - package: BooksTranslatorCore
+        product: LookupCore
+      - package: BooksTranslatorCore
+        product: ApplePlatformSupport
+    info:
+      path: Config/ActionInfo.plist
+      properties:
+        CFBundleDisplayName: Look Up with Margin
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        MarginAppGroupIdentifier: "$(MARGIN_APP_GROUP_IDENTIFIER)"
+        MarginSharedKeychainService: "$(MARGIN_SHARED_KEYCHAIN_SUFFIX)"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.ui-services
+          NSExtensionPrincipalClass: "$(PRODUCT_MODULE_NAME).ActionViewController"
+          NSExtensionActionWantsFullScreenPresentation: false
+          NSExtensionAttributes:
+            NSExtensionActivationRule:
+              NSExtensionActivationSupportsText: true
+    entitlements:
+      path: Config/Action.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - "$(MARGIN_APP_GROUP_IDENTIFIER)"
+        keychain-access-groups:
+          - "$(AppIdentifierPrefix)$(MARGIN_SHARED_KEYCHAIN_SUFFIX)"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(MARGIN_ACTION_BUNDLE_ID)
+        PRODUCT_NAME: MarginAction
+        SKIP_INSTALL: YES
+  BooksTranslatorIOS:
+    type: application
+    platform: iOS
+    sources:
+      - Apps/SharedUI
+      - Apps/iOS
+      - Assets
+      - path: Resources/App
+        buildPhase: resources
+      - path: Resources/iOS
+        buildPhase: resources
+    dependencies:
+      - target: BooksTranslatorAction
+        embed: true
+      - package: BooksTranslatorCore
+        product: LookupCore
+      - package: BooksTranslatorCore
+        product: ApplePlatformSupport
+    info:
+      path: Config/iOSInfo.plist
+      properties:
+        CFBundleDisplayName: Margin
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        MarginAppGroupIdentifier: "$(MARGIN_APP_GROUP_IDENTIFIER)"
+        MarginSharedKeychainService: "$(MARGIN_SHARED_KEYCHAIN_SUFFIX)"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    entitlements:
+      path: Config/iOS.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - "$(MARGIN_APP_GROUP_IDENTIFIER)"
+        keychain-access-groups:
+          - "$(AppIdentifierPrefix)$(MARGIN_SHARED_KEYCHAIN_SUFFIX)"
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        PRODUCT_BUNDLE_IDENTIFIER: $(MARGIN_IOS_BUNDLE_ID)
+        PRODUCT_NAME: Margin
+schemes:
+  BooksTranslatorMac:
+    build:
+      targets:
+        BooksTranslatorMac: all
+    run:
+      config: Debug
+    test:
+      targets:
+        - BooksTranslatorMacTests
+      postActions:
+        - name: Unregister temporary Margin builds
+          settingsTarget: BooksTranslatorMac
+          script: |
+            "$SRCROOT/scripts/unregister-derived-margin.sh"
+      environmentVariables:
+        - variable: MARGIN_HOSTED_TEST
+          value: "1"
+          isEnabled: true
+  BooksTranslatorIOS:
+    build:
+      targets:
+        BooksTranslatorIOS: all
+        BooksTranslatorAction: all
+    run:
+      config: Debug

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "dataset": {
+    "id": "margin-interface-demo-v1",
+    "title": "Interface demo — synthetic candidate labels",
+    "createdAt": "2026-07-15T00:00:00Z",
+    "cases": [
+      {
+        "id": "demo-history-01",
+        "category": "biography-history",
+        "source": {
+          "text": "By the time the archive opened, the argument had softened into a story. No one agreed on every detail, but they remembered the same silence at the end.",
+          "attribution": {
+            "title": "Margin interface demonstration",
+            "creator": "Margin project",
+            "sourceURL": "",
+            "license": "CC0-1.0; self-authored demonstration text"
+          }
+        },
+        "candidates": {
+          "apple": {
+            "text": "到档案馆开放时，争论已经软化成一个故事。没有人同意每一个细节，但他们记得结尾处同样的沉默。"
+          },
+          "deepseek": {
+            "text": "档案馆开放时，那场争论已渐渐化作一段往事。众人对细节各执一词，却都记得故事结束时的那片沉默。"
+          }
+        }
+      },
+      {
+        "id": "demo-dialogue-01",
+        "category": "fiction-dialogue",
+        "source": {
+          "text": "“You kept the letter?” Mara asked. Elias looked toward the window before answering, as though the rain might remember for him.",
+          "attribution": {
+            "title": "Margin interface demonstration",
+            "creator": "Margin project",
+            "sourceURL": "",
+            "license": "CC0-1.0; self-authored demonstration text"
+          }
+        },
+        "candidates": {
+          "apple": {
+            "text": "“你保留了信？”玛拉问道。伊莱亚斯在回答之前看向窗户，仿佛雨可能会替他记得。"
+          },
+          "deepseek": {
+            "text": "“那封信你还留着？”玛拉问。伊莱亚斯没有立刻回答，只望向窗外，仿佛那场雨能替他记起往事。"
+          }
+        }
+      }
+    ]
+  }
+}

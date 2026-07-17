@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "corpus": {
+    "id": "margin-public-domain-development-v1",
+    "title": "Margin adaptive passage development corpus",
+    "purpose": "Ten source-only public-domain passages used only to qualify the adaptive DeepSeek passage workflow before the locked blind evaluation. These cases are not scored against Apple and must never be included in the held-out set.",
+    "items": [
+      {
+        "id": "dev-jane-eyre-01",
+        "workId": "gutenberg-1260",
+        "category": "fiction-dialogue",
+        "chapter": "Chapter XXIII",
+        "text": "“Jane, be still; don’t struggle so, like a wild frantic bird that is rending its own plumage in its desperation.” “I am no bird; and no net ensnares me; I am a free human being with an independent will, which I now exert to leave you.” Another effort set me at liberty, and I stood erect before him. “And your will shall decide your destiny,” he said: “I offer you my hand, my heart, and a share of all my possessions.”",
+        "attribution": {
+          "title": "Jane Eyre: An Autobiography",
+          "creator": "Charlotte Brontë",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/1260/pg1260.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 1260"
+        }
+      },
+      {
+        "id": "dev-jane-eyre-02",
+        "workId": "gutenberg-1260",
+        "category": "fiction-dialogue",
+        "chapter": "Chapter XXXVIII",
+        "text": "Reader, I married him. A quiet wedding we had: he and I, the parson and clerk, were alone present. When we got back from church, I went into the kitchen of the manor-house, where Mary was cooking the dinner and John cleaning the knives, and I said—“Mary, I have been married to Mr. Rochester this morning.”",
+        "attribution": {
+          "title": "Jane Eyre: An Autobiography",
+          "creator": "Charlotte Brontë",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/1260/pg1260.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 1260"
+        }
+      },
+      {
+        "id": "dev-moby-dick-01",
+        "workId": "gutenberg-2701",
+        "category": "idiom-ambiguity-complex-syntax",
+        "chapter": "Chapter 1: Loomings",
+        "text": "Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world. It is a way I have of driving off the spleen and regulating the circulation.",
+        "attribution": {
+          "title": "Moby Dick; Or, The Whale",
+          "creator": "Herman Melville",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/2701/pg2701.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 2701"
+        }
+      },
+      {
+        "id": "dev-moby-dick-02",
+        "workId": "gutenberg-2701",
+        "category": "idiom-ambiguity-complex-syntax",
+        "chapter": "Chapter 135: The Chase—Third Day",
+        "text": "Oh, lonely death on lonely life! Oh, now I feel my topmost greatness lies in my topmost grief. Towards thee I roll, thou all-destroying but unconquering whale; to the last I grapple with thee; from hell’s heart I stab at thee; for hate’s sake I spit my last breath at thee. Thus, I give up the spear!",
+        "attribution": {
+          "title": "Moby Dick; Or, The Whale",
+          "creator": "Herman Melville",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/2701/pg2701.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 2701"
+        }
+      },
+      {
+        "id": "dev-frankenstein-01",
+        "workId": "gutenberg-84",
+        "category": "news-general-nonfiction",
+        "chapter": "Chapter IV",
+        "text": "I see by your eagerness and the wonder and hope which your eyes express, my friend, that you expect to be informed of the secret with which I am acquainted; that cannot be; listen patiently until the end of my story, and you will easily perceive why I am reserved upon that subject. I will not lead you on, unguarded and ardent as I then was, to your destruction and infallible misery. Learn from me, if not by my precepts, at least by my example, how dangerous is the acquirement of knowledge and how much happier that man is who believes his native town to be the world, than he who aspires to become greater than his nature will allow.",
+        "attribution": {
+          "title": "Frankenstein; or, the Modern Prometheus",
+          "creator": "Mary Wollstonecraft Shelley",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/84/pg84.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 84"
+        }
+      },
+      {
+        "id": "dev-frankenstein-02",
+        "workId": "gutenberg-84",
+        "category": "fiction-dialogue",
+        "chapter": "Chapter X",
+        "text": "Remember that I am thy creature; I ought to be thy Adam, but I am rather the fallen angel, whom thou drivest from joy for no misdeed. Everywhere I see bliss, from which I alone am irrevocably excluded. I was benevolent and good; misery made me a fiend. Make me happy, and I shall again be virtuous.",
+        "attribution": {
+          "title": "Frankenstein; or, the Modern Prometheus",
+          "creator": "Mary Wollstonecraft Shelley",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/84/pg84.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 84"
+        }
+      },
+      {
+        "id": "dev-time-machine-01",
+        "workId": "gutenberg-35",
+        "category": "news-general-nonfiction",
+        "chapter": "I",
+        "text": "“Scientific people,” proceeded the Time Traveller, after the pause required for the proper assimilation of this, “know very well that Time is only a kind of Space. Here is a popular scientific diagram, a weather record. This line I trace with my finger shows the movement of the barometer. Yesterday it was so high, yesterday night it fell, then this morning it rose again, and so gently upward to here.”",
+        "attribution": {
+          "title": "The Time Machine",
+          "creator": "H. G. Wells",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/35/pg35.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 35"
+        }
+      },
+      {
+        "id": "dev-time-machine-02",
+        "workId": "gutenberg-35",
+        "category": "idiom-ambiguity-complex-syntax",
+        "chapter": "VIII",
+        "text": "Then came troublesome doubts. Why had the Morlocks taken my Time Machine? Why, too, if the Eloi were masters, could they not restore the machine to me? And why were they so terribly afraid of the dark?",
+        "attribution": {
+          "title": "The Time Machine",
+          "creator": "H. G. Wells",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/35/pg35.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 35"
+        }
+      },
+      {
+        "id": "dev-dracula-01",
+        "workId": "gutenberg-345",
+        "category": "fiction-dialogue",
+        "chapter": "Jonathan Harker’s Journal, 5 May",
+        "text": "There seemed a strange stillness over everything; but as I listened I heard as if from down below in the valley the howling of many wolves. The Count’s eyes gleamed, and he said: “Listen to them—the children of the night. What music they make!” Seeing, I suppose, some expression in my face strange to him, he added: “Ah, sir, you dwellers in the city cannot enter into the feelings of the hunter.”",
+        "attribution": {
+          "title": "Dracula",
+          "creator": "Bram Stoker",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/345/pg345.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 345"
+        }
+      },
+      {
+        "id": "dev-dracula-02",
+        "workId": "gutenberg-345",
+        "category": "idiom-ambiguity-complex-syntax",
+        "chapter": "Dr. Seward’s Diary, 17 September",
+        "text": "Without an instant’s pause he made straight at me. He had a dinner-knife in his hand, and, as I saw he was dangerous, I tried to keep the table between us. He was too quick and too strong for me, however; for before I could get my balance he had struck at me and cut my left wrist rather severely. Before he could strike again, however, I got in my right and he was sprawling on his back on the floor.",
+        "attribution": {
+          "title": "Dracula",
+          "creator": "Bram Stoker",
+          "sourceURL": "https://www.gutenberg.org/cache/epub/345/pg345.txt",
+          "license": "Public domain in the United States; Project Gutenberg eBook 345"
+        }
+      }
+    ]
+  }
+}

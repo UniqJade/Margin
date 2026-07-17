@@ -1,0 +1,34 @@
+name: Feature request
+description: Propose a focused improvement to Margin.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: reading-problem
+    attributes:
+      label: Reading problem
+      description: What interruption or friction during reading should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the smallest useful behavior and its Apple platform scope.
+    validations:
+      required: true
+  - type: textarea
+    id: privacy
+    attributes:
+      label: Privacy, permissions, and provider impact
+      description: Note any new data, system permission, cloud call, storage, or credential behavior.
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Project boundaries
+      options:
+        - label: I have not included private book excerpts, API keys, signing data, or raw provider responses.
+          required: true

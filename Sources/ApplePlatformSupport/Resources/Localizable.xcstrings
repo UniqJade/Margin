@@ -1,0 +1,8 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "The API key could not be saved securely." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无法安全保存 API 密钥。" } } } },
+    "The saved API key could not be read. Delete it and enter it again." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无法读取已保存的 API 密钥，请删除后重新输入。" } } } }
+  },
+  "version" : "1.0"
+}

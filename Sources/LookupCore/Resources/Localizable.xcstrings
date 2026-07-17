@@ -1,0 +1,21 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Connect to the internet and try again." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请连接互联网后重试。" } } } },
+    "Complete the translation provider settings first." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请先完成翻译服务设置。" } } } },
+    "Keep the selection under %lld characters." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "所选文本请勿超过 %lld 个字符。" } } } },
+    "OpenAI-compatible cloud" : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "OpenAI 兼容云服务" } } } },
+    "Select an English word or passage first." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请先选择英文单词或段落。" } } } },
+    "The API key was rejected. Check it in Settings." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "API 密钥被拒绝，请在设置中检查。" } } } },
+    "The lookup was cancelled." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "查询已取消。" } } } },
+    "The semantic alignment was incomplete." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "语义对齐不完整。" } } } },
+    "The translation result did not contain usable Chinese text." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译结果未包含可用的中文译文。" } } } },
+    "The translation result used an unreadable format." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译结果的格式无法读取。" } } } },
+    "The translation result was incomplete." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译结果不完整。" } } } },
+    "The translation service returned an empty result." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译服务返回了空结果。" } } } },
+    "The translation could not be read. Try again." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无法读取翻译结果，请重试。" } } } },
+    "The translation service is busy. Try again shortly." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译服务繁忙，请稍后重试。" } } } },
+    "The translation service is temporarily unavailable." : { "localizations" : { "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "翻译服务暂时不可用。" } } } }
+  },
+  "version" : "1.0"
+}

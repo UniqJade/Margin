@@ -1,0 +1,10 @@
+// Public, non-personal defaults. Local.xcconfig overrides these values for a signed personal build.
+MARGIN_DEVELOPMENT_TEAM =
+MARGIN_MAC_BUNDLE_ID = dev.example.BooksTranslator.mac
+MARGIN_IOS_BUNDLE_ID = dev.example.BooksTranslator
+MARGIN_ACTION_BUNDLE_ID = dev.example.BooksTranslator.action
+MARGIN_APP_GROUP_IDENTIFIER = group.dev.example.BooksTranslator
+MARGIN_SHARED_KEYCHAIN_SUFFIX = dev.example.BooksTranslator.shared
+MARGIN_MAC_KEYCHAIN_SERVICE = dev.example.Margin.mac.v2
+
+#include? "../Local.xcconfig"
