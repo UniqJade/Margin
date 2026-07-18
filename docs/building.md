@@ -151,6 +151,11 @@ Books selection delivery.
 
 ## iPhone/iPad physical-device experiment
 
+The recorded iPadOS 26.5 / Apple Books 8.5 configuration did not expose Margin's
+Action Extension or a selected-text Share Sheet Shortcut. Use this procedure to
+retest a different OS/Books version, not as evidence that the current Books
+integration is expected to work.
+
 1. Open `BooksTranslator.xcodeproj` in Xcode.
 2. Select your development team for both `BooksTranslatorIOS` and
    `BooksTranslatorAction`.
@@ -163,7 +168,7 @@ Books selection delivery.
    `compatibility-spike.md` before describing the Books integration as supported.
 
 Free Personal Team provisioning may not expose every required shared capability
-and expires frequently. Margin does not promise that the experimental iOS flow
+and expires frequently. Margin does not promise that the exploratory iOS shell
 works with every free or paid developer-account configuration.
 
 ## Generated project discipline
@@ -319,6 +324,10 @@ xcodebuild -project BooksTranslator.xcodeproj \
 
 ### iPhone/iPad 真机实验
 
+已记录的 iPadOS 26.5 / Apple Books 8.5 配置没有显示 Margin Action
+Extension，也没有向共享表单快捷指令提供选区。以下步骤用于重新测试不同的系统或
+Books 版本，不能用来证明当前 Books 集成应当可用。
+
 1. 在 Xcode 中打开工程。
 2. 为 iOS App 与 Action Extension 选择自己的 Team。
 3. 按 `Local.xcconfig.example` 为两个 Target 配好 App Group 和共享钥匙串能力。
@@ -327,7 +336,7 @@ xcodebuild -project BooksTranslator.xcodeproj \
 6. 按 `compatibility-spike.md` 完成单词、句子和多行选区测试。
 
 免费 Personal Team 可能没有全部共享能力，而且描述文件会频繁过期；Margin 不承诺
-实验性 iOS 流程能在每种免费或付费账号配置下工作。
+探索性 iOS 外壳能在每种免费或付费账号配置下工作。
 
 ### 生成工程与发布检查
 

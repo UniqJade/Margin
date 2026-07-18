@@ -1,4 +1,4 @@
-# Margin — Contextual Reading for Apple Books
+# Margin — Contextual Reading for Apple Books on Mac
 
 > **Read English. Stay in the book.**
 
@@ -6,13 +6,13 @@
 [![Release](https://img.shields.io/github/v/release/UniqJade/Margin?display_name=tag)](https://github.com/UniqJade/Margin/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![macOS: verified](https://img.shields.io/badge/macOS-verified-d97757)
-![iPhone/iPad: experimental](https://img.shields.io/badge/iPhone%20%2F%20iPad-experimental-8a8a8a)
 
 [简体中文](README.zh-CN.md)
 
-Margin is a personal, open-source English → Simplified Chinese reading companion.
-Select a word or a short passage in Apple Books, press one shortcut, and read the
-result beside the page instead of switching to a general-purpose translator.
+Margin is a personal, open-source macOS English → Simplified Chinese reading
+companion. Select a word or short passage in Apple Books, press one shortcut,
+and read the result beside the page instead of switching to a general-purpose
+translator.
 
 Margin is deliberately narrow. It is not trying to replace a comprehensive
 dictionary, OCR tool, document translator, or language-learning platform. It is
@@ -28,25 +28,20 @@ cue.
 
 ## Status
 
-| Platform | Current status | Apple Books path |
-|---|---|---|
-| macOS | **Verified** | Select text, then press `Control–Option–M` (`⌃⌥M`) |
-| iPhone / iPad | **Experimental** | Action Extension and Shortcut fallback exist, but Books handoff still needs physical-device verification |
-
-The verified Mac configuration is macOS 26.5 with Apple Books 8.5. Direct macOS
-Services delivery was not exposed by that Books reading view; the supported path
-uses the explicit shortcut and user-approved Accessibility access. See the
+The verified configuration is macOS 26.5 with Apple Books 8.5: select text, then
+press `Control–Option–M` (`⌃⌥M`). Direct macOS Services delivery was not exposed
+by that Books reading view; the supported path uses the explicit shortcut and
+user-approved Accessibility access. See the
 [compatibility record](docs/compatibility-spike.md) for the exact boundary.
 
 This repository distributes **source only**. It does not provide a public `.app`,
-DMG, TestFlight build, hosted service, or end-user installation support. The
-credential design is personal BYOK: you build Margin yourself and supply your own
-provider key.
+DMG, hosted service, or end-user installation support. The credential design is
+personal BYOK: you build Margin yourself and supply your own provider key.
 
 ## What makes Margin different
 
-- **Stay on the page.** One shortcut opens one reusable panel over Apple Books;
-  dismissing it returns immediately to reading.
+- **Stay on the page on Mac.** One shortcut opens one reusable panel over Apple
+  Books; dismissing it returns immediately to reading.
 - **Designed for prose.** Passage output aims for natural published Chinese,
   especially for the two-to-four-sentence selections common in novels,
   biography, history, and nonfiction.
@@ -64,8 +59,8 @@ provider key.
 Margin complements rather than replaces tools such as Apple Look Up, Youdao, or
 Eudic. Those products have stronger system integration, mature lexical sources,
 OCR, offline dictionaries, document workflows, and learning features. Margin's
-advantage is a quieter Apple Books workflow and a translation prompt focused on
-natural Chinese prose. Its AI-generated dictionary content is not an
+advantage on Mac is a quieter Apple Books workflow and a translation prompt
+focused on natural Chinese prose. Its AI-generated dictionary content is not an
 authoritative lexical source.
 
 ## Reading experience
@@ -156,21 +151,8 @@ for Accessibility access. The permission path begins only when you invoke the
 capture shortcut.
 
 Full prerequisites, unsigned test commands, signing configuration, stable Mac
-installation, iOS builds, and cleanup are documented in
+installation, and cleanup are documented in
 [Building Margin](docs/building.md).
-
-## iPhone and iPad
-
-The repository includes an iOS/iPadOS container app, Action Extension, and a
-`Look Up English Text` App Intent. Their structure and simulator build are part of
-the project, but Apple Books selection delivery has not yet been verified on a
-physical iPhone or iPad.
-
-Do not describe mobile Apple Books integration as working until the matrix in
-[compatibility-spike.md](docs/compatibility-spike.md) has a recorded device result.
-If Books opens the Action Extension without text, the intended fallback is a
-pinned Share Sheet Shortcut that passes Shortcut Input to the App Intent. OCR and
-screenshot capture remain out of scope.
 
 ## Translation evaluation
 
@@ -222,7 +204,7 @@ full method, copyright boundary, and limitations are in
 
 The repository contains:
 
-- native macOS, iOS/iPadOS, and Action Extension shells under `Apps/`;
+- native application code under `Apps/`;
 - shared lookup, validation, provider, cache, and saved-item logic under
   `Sources/`;
 - deterministic Swift and hosted Mac tests under `Tests/`;
@@ -242,8 +224,6 @@ Live API calls are opt-in and excluded from normal tests. Start with
   Translation.
 - Word entries do not cite a licensed authoritative dictionary.
 - Accessibility permission is required for the verified Apple Books Mac shortcut.
-- iPhone/iPad Apple Books handoff is experimental and unverified on a physical
-  device.
 - Personal source build only; no public binary, account sync, OCR, document
   translation, or support guarantee.
 
