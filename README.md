@@ -46,8 +46,9 @@ personal BYOK: you build Margin yourself and supply your own provider key.
   especially for the two-to-four-sentence selections common in novels,
   biography, history, and nonfiction.
 - **One translation, two views.** Natural Translation presents the coherent
-  Chinese passage. Semantic Alignment reorganizes that same translation beside
-  its source sentences; it does not generate a conflicting second translation.
+  Chinese passage first. Bilingual View reorganizes that same translation into
+  numbered English–Chinese sentence blocks; it does not generate a conflicting
+  second translation.
 - **Material nuance only.** A nuance note is requested only when ambiguity could
   change meaning, tone, reference, or relationship.
 - **Compact dictionary-style words.** Word results provide pronunciations,
@@ -67,17 +68,19 @@ authoritative lexical source.
 
 ### Passage lookup
 
-Passage results default to **Natural Translation**. When structured alignment is
-available, switch to **Semantic Alignment** to inspect which adjacent English
-sentence or sentences correspond to each Chinese segment. The complete
+Passage results default to **Natural Translation**, with the complete Chinese
+passage as the primary content and the English original inside a collapsed
+disclosure. When structured alignment is available, switch to **Bilingual
+View** to read numbered English–Chinese sentence blocks in order. The complete
 translation is derived from those ordered segments, so both views use the same
 Chinese wording. Margin only shows the mode switch when the result contains at
-least two alignment blocks; a single block stays in Natural Translation because
-the two presentations would otherwise be effectively identical.
+least two alignment blocks; zero or one block stays quietly in Natural
+Translation.
 
-Long original text folds automatically. Short results keep the panel compact;
-long results scroll within the 280–620 pt Mac panel while Copy, Speak, Save, and
-Retry remain available. The existing icons keep their native Apple appearance.
+The English original stays folded until requested. Short results keep the panel
+compact; long results scroll within the 280–620 pt Mac panel while Copy, Speak,
+Save, and Retry remain available. The existing icons keep their native Apple
+appearance.
 
 ### Word lookup
 
@@ -219,9 +222,8 @@ Live API calls are opt-in and excluded from normal tests. Start with
 - Cloud provider and network required; no local model or offline dictionary.
 - AI output can mistranslate, omit nuance, invent lexical detail, or return
   malformed structure.
-- Semantic Alignment is sentence-level. A long selection containing one
-  grammatical sentence can produce one block that looks similar to Natural
-  Translation.
+- Bilingual View is sentence-level and is only offered when at least two
+  alignment blocks are available.
 - Word entries do not cite a licensed authoritative dictionary.
 - Accessibility permission is required for the verified Apple Books Mac shortcut.
 - Personal source build only; no public binary, account sync, OCR, document
