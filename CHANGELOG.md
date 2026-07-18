@@ -7,6 +7,8 @@ releases. Margin does not currently distribute public application binaries.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-18
+
 ### Changed
 
 - Passage results now show the Natural Translation view without a redundant
@@ -15,6 +17,11 @@ releases. Margin does not currently distribute public application binaries.
   blocks provide a meaningful sentence-level comparison.
 - XcodeGen no longer rewrites the checked-in project when the repository is
   cloned into a directory whose name differs from the original checkout.
+
+### Maintenance
+
+- Updated the public CI checkout action to `actions/checkout@v7` after the full
+  macOS and iOS validation workflow passed.
 
 ## [0.1.0] - 2026-07-17
 
@@ -55,5 +62,6 @@ releases. Margin does not currently distribute public application binaries.
 - iPhone/iPad Apple Books selection delivery remains unverified on physical
   devices.
 
-[Unreleased]: https://github.com/UniqJade/Margin/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/UniqJade/Margin/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/UniqJade/Margin/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/UniqJade/Margin/releases/tag/v0.1.0

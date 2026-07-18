@@ -2,6 +2,12 @@
 
 > **Read English. Stay in the book.｜阅读英文，不离开书页。**
 
+[![Public source validation](https://github.com/UniqJade/Margin/actions/workflows/ci.yml/badge.svg)](https://github.com/UniqJade/Margin/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/UniqJade/Margin?display_name=tag)](https://github.com/UniqJade/Margin/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![macOS: verified](https://img.shields.io/badge/macOS-verified-d97757)
+![iPhone/iPad: experimental](https://img.shields.io/badge/iPhone%20%2F%20iPad-experimental-8a8a8a)
+
 [English](README.md)
 
 Margin 是一个个人优先、开放源码的英语 → 简体中文阅读助手。在 Apple
@@ -13,7 +19,7 @@ Margin 刻意保持狭窄边界。它不试图取代综合词典、OCR 工具、
 
 ## 当前状态
 
-| 平台 | v0.1.0 状态 | Apple Books 使用路径 |
+| 平台 | 当前状态 | Apple Books 使用路径 |
 |---|---|---|
 | macOS | **已验证** | 选择文字，然后按 `Control–Option–M`（`⌃⌥M`） |
 | iPhone / iPad | **实验性** | 已有 Action Extension 和快捷指令备用方案，但仍需真机验证 Books 是否传递选区 |

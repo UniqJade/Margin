@@ -2,6 +2,12 @@
 
 > **Read English. Stay in the book.**
 
+[![Public source validation](https://github.com/UniqJade/Margin/actions/workflows/ci.yml/badge.svg)](https://github.com/UniqJade/Margin/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/UniqJade/Margin?display_name=tag)](https://github.com/UniqJade/Margin/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![macOS: verified](https://img.shields.io/badge/macOS-verified-d97757)
+![iPhone/iPad: experimental](https://img.shields.io/badge/iPhone%20%2F%20iPad-experimental-8a8a8a)
+
 [简体中文](README.zh-CN.md)
 
 Margin is a personal, open-source English → Simplified Chinese reading companion.
@@ -14,7 +20,7 @@ trying to make one interruption in English reading smaller.
 
 ## Status
 
-| Platform | v0.1.0 status | Apple Books path |
+| Platform | Current status | Apple Books path |
 |---|---|---|
 | macOS | **Verified** | Select text, then press `Control–Option–M` (`⌃⌥M`) |
 | iPhone / iPad | **Experimental** | Action Extension and Shortcut fallback exist, but Books handoff still needs physical-device verification |
