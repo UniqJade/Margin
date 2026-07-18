@@ -103,8 +103,8 @@ else
     if ! /usr/bin/grep -Eiq '(macOS.{0,80}(primary|verified)|(primary|verified).{0,80}macOS)' README.md; then
         fail "README.md must identify macOS as the primary or verified platform"
     fi
-    if ! /usr/bin/grep -Eiq '((iOS|iPadOS|iPhone|iPad).{0,80}experimental|experimental.{0,80}(iOS|iPadOS|iPhone|iPad))' README.md; then
-        fail "README.md must identify iOS/iPadOS support as Experimental"
+    if /usr/bin/grep -Eiq '(iOS|iPadOS|iPhone|iPad)' README.md; then
+        fail "README.md must remain focused on the verified macOS experience"
     fi
 fi
 
