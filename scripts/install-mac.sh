@@ -62,7 +62,7 @@ if [[ "$identities" != *"Apple Development:"* ]]; then
 fi
 
 cd "$repository_root"
-xcodegen generate
+"$script_dir/generate-project.sh"
 build_settings=$(xcodebuild \
     -project BooksTranslator.xcodeproj \
     -target BooksTranslatorMac \

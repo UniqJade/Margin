@@ -47,7 +47,7 @@ Forks must use their own values.
 From the repository root:
 
 ```bash
-xcodegen generate
+./scripts/generate-project.sh
 swift test
 ./scripts/test-mac.sh
 node --test Evaluation/tests/core.test.cjs
@@ -136,7 +136,7 @@ experimentation only.
 The iOS app and Action Extension can be compiled without signing:
 
 ```bash
-xcodegen generate
+./scripts/generate-project.sh
 xcodebuild -project BooksTranslator.xcodeproj \
   -scheme BooksTranslatorIOS \
   -configuration Debug \
@@ -253,7 +253,7 @@ git check-ignore -v Local.xcconfig
 ### 2. 生成工程并测试
 
 ```bash
-xcodegen generate
+./scripts/generate-project.sh
 swift test
 ./scripts/test-mac.sh
 node --test Evaluation/tests/core.test.cjs
@@ -305,7 +305,7 @@ Development 签名以及 Mac 不含 Sandbox/App Group/共享钥匙串 entitlemen
 ### iOS/iPadOS 模拟器
 
 ```bash
-xcodegen generate
+./scripts/generate-project.sh
 xcodebuild -project BooksTranslator.xcodeproj \
   -scheme BooksTranslatorIOS \
   -configuration Debug \

@@ -62,7 +62,9 @@ Passage results default to **Natural Translation**. When structured alignment is
 available, switch to **Semantic Alignment** to inspect which adjacent English
 sentence or sentences correspond to each Chinese segment. The complete
 translation is derived from those ordered segments, so both views use the same
-Chinese wording.
+Chinese wording. Margin only shows the mode switch when the result contains at
+least two alignment blocks; a single block stays in Natural Translation because
+the two presentations would otherwise be effectively identical.
 
 Long original text folds automatically. Short results keep the panel compact;
 long results scroll within the 280–620 pt Mac panel while Copy, Speak, Save, and

@@ -7,6 +7,15 @@ releases. Margin does not currently distribute public application binaries.
 
 ## [Unreleased]
 
+### Changed
+
+- Passage results now show the Natural Translation view without a redundant
+  mode switch when structured alignment contains only one block.
+- The Semantic Alignment switch remains available when two or more alignment
+  blocks provide a meaningful sentence-level comparison.
+- XcodeGen no longer rewrites the checked-in project when the repository is
+  cloned into a directory whose name differs from the original checkout.
+
 ## [0.1.0] - 2026-07-17
 
 ### Added
