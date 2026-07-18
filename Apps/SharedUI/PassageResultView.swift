@@ -15,42 +15,62 @@ struct PassagePresentationIdentity: Hashable {
 
 enum PassageReadingMode: String, CaseIterable {
     case naturalTranslation
-    case semanticAlignment
+    case bilingualView
 
     var title: LocalizedStringResource {
         switch self {
         case .naturalTranslation: "Natural Translation"
-        case .semanticAlignment: "Semantic Alignment"
+        case .bilingualView: "Bilingual View"
         }
     }
 }
 
 enum PassageReadingAvailability: Equatable {
-    case unavailable
     case naturalOnly
     case switchable
 
     init(alignmentBlockCount: Int) {
-        switch alignmentBlockCount {
-        case 0:
-            self = .unavailable
-        case 1:
-            self = .naturalOnly
-        default:
-            self = .switchable
-        }
+        self = alignmentBlockCount >= 2 ? .switchable : .naturalOnly
     }
 
     var showsModePicker: Bool {
         self == .switchable
     }
 
-    var showsUnavailableMessage: Bool {
-        self == .unavailable
-    }
-
     func effectiveMode(for requestedMode: PassageReadingMode) -> PassageReadingMode {
         self == .switchable ? requestedMode : .naturalTranslation
+    }
+}
+
+struct PassageAlignmentDisplayBlock: Equatable {
+    let sourceSentenceIDs: [Int]
+    let sourceText: String
+    let translation: String
+
+    var sentenceLabel: String {
+        guard let first = sourceSentenceIDs.first else { return "Sentence" }
+        guard sourceSentenceIDs.count > 1, let last = sourceSentenceIDs.last else {
+            return "Sentence \(first)"
+        }
+        return "Sentences \(first)–\(last)"
+    }
+}
+
+enum PassageAlignmentPresentation {
+    static func blocks(
+        originalText: String,
+        passage: PassageLookupResult
+    ) -> [PassageAlignmentDisplayBlock] {
+        let sentences = Dictionary(
+            uniqueKeysWithValues: PassageSentenceSegmenter.segment(originalText).map { ($0.id, $0.text) }
+        )
+        return passage.alignmentBlocks.map { block in
+            PassageAlignmentDisplayBlock(
+                sourceSentenceIDs: block.sourceSentenceIDs,
+                sourceText: block.sourceSentenceIDs.compactMap { sentences[$0] }.joined(separator: " "),
+                translation: block.translation
+            )
+        }
     }
 }
 
@@ -60,15 +80,14 @@ enum PassageVisibleContent {
         originalText: String,
         passage: PassageLookupResult
     ) -> String {
-        guard mode == .semanticAlignment, !passage.alignmentBlocks.isEmpty else {
+        guard mode == .bilingualView, !passage.alignmentBlocks.isEmpty else {
             return passage.translation
         }
-        let sentences = Dictionary(
-            uniqueKeysWithValues: PassageSentenceSegmenter.segment(originalText).map { ($0.id, $0.text) }
-        )
-        return passage.alignmentBlocks.map { block in
-            let source = block.sourceSentenceIDs.compactMap { sentences[$0] }.joined(separator: " ")
-            return "\(source)\n\(block.translation)"
+        return PassageAlignmentPresentation.blocks(
+            originalText: originalText,
+            passage: passage
+        ).map { block in
+            "\(block.sourceText)\n\(block.translation)"
         }
         .joined(separator: "\n\n")
     }
@@ -76,6 +95,7 @@ enum PassageVisibleContent {
 
 struct PassagePresentationState {
     var readingMode: PassageReadingMode = .naturalTranslation
+    var showsOriginalText = false
     var showsLiteralView = false
     var readingHeight: CGFloat = 0
     var actionHeight: CGFloat = 0
@@ -148,18 +168,13 @@ private struct PassageResultContent: View {
                     if readingAvailability.showsModePicker {
                         readingModePicker
                             .padding(.bottom, 22)
-                    } else if readingAvailability.showsUnavailableMessage {
-                        Label("Semantic alignment was not generated for this lookup.", systemImage: "text.alignleft")
-                            .font(.caption)
-                            .foregroundStyle(.tertiary)
-                            .padding(.bottom, 18)
                     }
 
                     switch effectiveReadingMode {
                     case .naturalTranslation:
                         naturalTranslationBody
-                    case .semanticAlignment:
-                        semanticAlignmentBody
+                    case .bilingualView:
+                        bilingualViewBody
                     }
                 }
                 .padding(.horizontal, 24)
@@ -206,29 +221,45 @@ private struct PassageResultContent: View {
 
     private var naturalTranslationBody: some View {
         VStack(alignment: .leading, spacing: 0) {
-            sectionMarker(marker: "EN", label: "ORIGINAL", accessibilityLabel: "Original English text")
-                .padding(.bottom, 10)
-            CollapsibleOriginalText(text: originalText)
-
-            Divider()
-                .padding(.vertical, 22)
-
             sectionMarker(marker: "中", label: "自然译文", accessibilityLabel: "Natural Chinese translation")
                 .padding(.bottom, 12)
 
             naturalTranslation(passage)
+
+            Divider()
+                .padding(.vertical, 22)
+
+            DisclosureGroup(isExpanded: $presentationState.showsOriginalText) {
+                CollapsibleOriginalText(text: originalText)
+                    .padding(.top, 12)
+            } label: {
+                sectionMarker(
+                    marker: "EN",
+                    label: originalDisclosureTitle,
+                    accessibilityLabel: "Original English text"
+                )
+            }
+            .tint(MarginTheme.accentForeground)
         }
     }
 
-    private var semanticAlignmentBody: some View {
-        VStack(alignment: .leading, spacing: 16) {
+    private var bilingualViewBody: some View {
+        VStack(alignment: .leading, spacing: 20) {
             sectionMarker(
                 marker: "EN / 中",
-                label: "SEMANTIC ALIGNMENT",
-                accessibilityLabel: "English and Chinese semantic alignment"
+                label: "BILINGUAL VIEW",
+                accessibilityLabel: "English and Chinese bilingual view"
             )
 
-            ForEach(Array(passage.alignmentBlocks.enumerated()), id: \.offset) { _, block in
+            ForEach(
+                Array(
+                    PassageAlignmentPresentation.blocks(
+                        originalText: originalText,
+                        passage: passage
+                    ).enumerated()
+                ),
+                id: \.offset
+            ) { _, block in
                 alignmentBlock(block)
             }
 
@@ -236,35 +267,67 @@ private struct PassageResultContent: View {
         }
     }
 
-    private func alignmentBlock(_ block: PassageAlignmentBlock) -> some View {
-        let sentences = Dictionary(
-            uniqueKeysWithValues: PassageSentenceSegmenter.segment(originalText).map { ($0.id, $0.text) }
-        )
-        let sourceText = block.sourceSentenceIDs.compactMap { sentences[$0] }.joined(separator: " ")
-        return VStack(alignment: .leading, spacing: 10) {
-            Text(sourceText)
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .lineSpacing(3)
-                .textSelection(.enabled)
+    private func alignmentBlock(_ block: PassageAlignmentDisplayBlock) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sentenceRangeLabel(for: block.sourceSentenceIDs)
+                .font(.caption.weight(.bold))
+                .foregroundStyle(MarginTheme.accentForeground)
 
-            Text(block.translation)
-                .font(.system(.title3, design: .serif))
-                .lineSpacing(5)
-                .textSelection(.enabled)
+            alignmentLanguageRow(marker: "EN") {
+                Text(block.sourceText)
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .lineSpacing(3)
+                    .textSelection(.enabled)
+            }
+
+            Divider()
+                .padding(.leading, 30)
+
+            alignmentLanguageRow(marker: "中") {
+                Text(block.translation)
+                    .font(.system(.title3, design: .serif))
+                    .lineSpacing(5)
+                    .textSelection(.enabled)
+            }
         }
-        .padding(14)
+        .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             MarginTheme.elevatedSurface,
-            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+            in: RoundedRectangle(cornerRadius: 14, style: .continuous)
         )
         .overlay(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 1.5, style: .continuous)
+            RoundedRectangle(cornerRadius: 2, style: .continuous)
                 .fill(MarginTheme.accent)
-                .frame(width: 3)
+                .frame(width: 4)
         }
         .accessibilityElement(children: .combine)
+    }
+
+    private func alignmentLanguageRow<Content: View>(
+        marker: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            Text(marker)
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(MarginTheme.accentForeground)
+                .frame(width: 18, alignment: .leading)
+            content()
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    @ViewBuilder
+    private func sentenceRangeLabel(for sentenceIDs: [Int]) -> some View {
+        if let first = sentenceIDs.first {
+            if sentenceIDs.count > 1, let last = sentenceIDs.last {
+                Text("Sentences \(first)–\(last)")
+            } else {
+                Text("Sentence \(first)")
+            }
+        }
     }
 
     private func reportPreferredHeight() {
@@ -299,8 +362,8 @@ private struct PassageResultContent: View {
 
     private func sectionMarker(
         marker: String,
-        label: LocalizedStringKey,
-        accessibilityLabel: LocalizedStringKey
+        label: LocalizedStringResource,
+        accessibilityLabel: LocalizedStringResource
     ) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Text(marker)
@@ -313,6 +376,10 @@ private struct PassageResultContent: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text(accessibilityLabel))
+    }
+
+    private var originalDisclosureTitle: LocalizedStringResource {
+        presentationState.showsOriginalText ? "Hide English original" : "View English original"
     }
 
     private func naturalTranslation(_ passage: PassageLookupResult) -> some View {
