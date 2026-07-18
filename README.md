@@ -18,6 +18,14 @@ Margin is deliberately narrow. It is not trying to replace a comprehensive
 dictionary, OCR tool, document translator, or language-learning platform. It is
 trying to make one interruption in English reading smaller.
 
+## See Margin in context
+
+![Select text in Apple Books, press Control–Option–M, and read the translation beside the page](docs/images/margin-books-demo.gif)
+
+The passage is self-authored demonstration text. The Apple Books selection and
+Margin result are captured from the real apps; the shortcut card is an editing
+cue.
+
 ## Status
 
 | Platform | Current status | Apple Books path |
