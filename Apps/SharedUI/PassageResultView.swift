@@ -25,6 +25,35 @@ enum PassageReadingMode: String, CaseIterable {
     }
 }
 
+enum PassageReadingAvailability: Equatable {
+    case unavailable
+    case naturalOnly
+    case switchable
+
+    init(alignmentBlockCount: Int) {
+        switch alignmentBlockCount {
+        case 0:
+            self = .unavailable
+        case 1:
+            self = .naturalOnly
+        default:
+            self = .switchable
+        }
+    }
+
+    var showsModePicker: Bool {
+        self == .switchable
+    }
+
+    var showsUnavailableMessage: Bool {
+        self == .unavailable
+    }
+
+    func effectiveMode(for requestedMode: PassageReadingMode) -> PassageReadingMode {
+        self == .switchable ? requestedMode : .naturalTranslation
+    }
+}
+
 enum PassageVisibleContent {
     static func text(
         for mode: PassageReadingMode,
@@ -101,24 +130,32 @@ private struct PassageResultContent: View {
 
     @State private var presentationState = PassagePresentationState()
 
+    private var readingAvailability: PassageReadingAvailability {
+        PassageReadingAvailability(alignmentBlockCount: passage.alignmentBlocks.count)
+    }
+
+    private var effectiveReadingMode: PassageReadingMode {
+        readingAvailability.effectiveMode(for: presentationState.readingMode)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     header
-                        .padding(.bottom, passage.alignmentBlocks.isEmpty ? 24 : 18)
+                        .padding(.bottom, readingAvailability.showsModePicker ? 18 : 24)
 
-                    if !passage.alignmentBlocks.isEmpty {
+                    if readingAvailability.showsModePicker {
                         readingModePicker
                             .padding(.bottom, 22)
-                    } else {
+                    } else if readingAvailability.showsUnavailableMessage {
                         Label("Semantic alignment was not generated for this lookup.", systemImage: "text.alignleft")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                             .padding(.bottom, 18)
                     }
 
-                    switch presentationState.readingMode {
+                    switch effectiveReadingMode {
                     case .naturalTranslation:
                         naturalTranslationBody
                     case .semanticAlignment:
@@ -137,7 +174,7 @@ private struct PassageResultContent: View {
 
             LookupActionBar(
                 primaryText: PassageVisibleContent.text(
-                    for: presentationState.readingMode,
+                    for: effectiveReadingMode,
                     originalText: originalText,
                     passage: passage
                 ),

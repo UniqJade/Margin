@@ -120,7 +120,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		01FAC38793A2D8D38A4C9A49 /* BooksTranslator */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BooksTranslator; path = .; sourceTree = SOURCE_ROOT; };
 		100634C9A607BC8C27B4682E /* WordDictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordDictionaryView.swift; sourceTree = "<group>"; };
 		2C2DB88ED13060A5CEA30F75 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/ServicesMenu.strings; sourceTree = "<group>"; };
 		2F959CC6247AA7244281FA17 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
@@ -130,6 +129,7 @@
 		3CEA0A1B58FA6DE45BB0EA8D /* OriginalTextFoldPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OriginalTextFoldPolicyTests.swift; sourceTree = "<group>"; };
 		3CEF2E23AA9188863147058C /* PassageResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassageResultView.swift; sourceTree = "<group>"; };
 		41C78232C67A2B4185F2FDEC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		437A196E6D30D50B1CDB2103 /* Margin */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Margin; path = .; sourceTree = SOURCE_ROOT; };
 		51391B3ADA7067E3377F09A0 /* LookupPanelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LookupPanelTests.swift; sourceTree = "<group>"; };
 		538605A37BA102FA39825180 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		56B262964B385723A6E82502 /* LookupActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LookupActionBar.swift; sourceTree = "<group>"; };
@@ -355,7 +355,7 @@
 		F8183B31730C536CB6B8A4F5 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				01FAC38793A2D8D38A4C9A49 /* BooksTranslator */,
+				437A196E6D30D50B1CDB2103 /* Margin */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -849,7 +849,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -913,7 +913,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.1.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

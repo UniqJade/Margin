@@ -11,7 +11,7 @@ cleanup() {
 trap cleanup EXIT
 
 cd "$repository_root"
-xcodegen generate
+"$script_dir/generate-project.sh"
 xcodebuild \
     -project BooksTranslator.xcodeproj \
     -scheme BooksTranslatorMac \

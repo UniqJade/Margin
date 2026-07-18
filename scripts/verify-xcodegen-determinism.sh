@@ -11,16 +11,38 @@ cleanup() {
 }
 trap cleanup EXIT
 
-cd "$repository_root"
-/bin/mkdir "$temporary_root/first" "$temporary_root/second"
-xcodegen generate \
-    --project "$temporary_root/first" \
-    --project-root "$repository_root"
-xcodegen generate \
-    --project "$temporary_root/second" \
-    --project-root "$repository_root"
-/usr/bin/diff -ru \
-    "$temporary_root/first/BooksTranslator.xcodeproj" \
-    "$temporary_root/second/BooksTranslator.xcodeproj"
+remove_xcode_runtime_metadata() {
+    local project_copy=$1
+    /bin/rm -rf -- \
+        "$project_copy/xcuserdata" \
+        "$project_copy/project.xcworkspace/xcuserdata" \
+        "$project_copy/project.xcworkspace/xcshareddata"
+}
 
-print "XcodeGen determinism check passed: consecutive generations are identical."
+cd "$repository_root"
+/bin/cp -R "$repository_root/BooksTranslator.xcodeproj" "$temporary_root/before"
+remove_xcode_runtime_metadata "$temporary_root/before"
+
+"$script_dir/generate-project.sh"
+/bin/cp -R "$repository_root/BooksTranslator.xcodeproj" "$temporary_root/after-first"
+remove_xcode_runtime_metadata "$temporary_root/after-first"
+
+"$script_dir/generate-project.sh"
+/bin/cp -R "$repository_root/BooksTranslator.xcodeproj" "$temporary_root/after-second"
+remove_xcode_runtime_metadata "$temporary_root/after-second"
+
+/usr/bin/diff -ru \
+    "$temporary_root/before" \
+    "$temporary_root/after-first"
+/usr/bin/diff -ru \
+    "$temporary_root/after-first" \
+    "$temporary_root/after-second"
+
+if ! /usr/bin/grep -Fq \
+    'name = Margin; path = .; sourceTree = SOURCE_ROOT;' \
+    "$repository_root/BooksTranslator.xcodeproj/project.pbxproj"; then
+    print -u2 "XcodeGen determinism check failed: the local package does not use stable Margin metadata."
+    exit 1
+fi
+
+print "XcodeGen determinism check passed: the checked-in project and consecutive generations are identical."

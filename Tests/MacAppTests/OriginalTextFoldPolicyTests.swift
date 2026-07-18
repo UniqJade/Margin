@@ -95,6 +95,67 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
         )
     }
 
+    func testReadingAvailabilityFollowsAlignmentBlockCount() {
+        let unavailable = PassageReadingAvailability(alignmentBlockCount: 0)
+        let naturalOnly = PassageReadingAvailability(alignmentBlockCount: 1)
+        let switchable = PassageReadingAvailability(alignmentBlockCount: 2)
+
+        XCTAssertTrue(unavailable.showsUnavailableMessage)
+        XCTAssertFalse(unavailable.showsModePicker)
+        XCTAssertFalse(naturalOnly.showsUnavailableMessage)
+        XCTAssertFalse(naturalOnly.showsModePicker)
+        XCTAssertFalse(switchable.showsUnavailableMessage)
+        XCTAssertTrue(switchable.showsModePicker)
+    }
+
+    func testUnavailableAndSingleBlockAvailabilityClampToNaturalTranslation() {
+        XCTAssertEqual(
+            PassageReadingAvailability(alignmentBlockCount: 0)
+                .effectiveMode(for: .semanticAlignment),
+            .naturalTranslation
+        )
+        XCTAssertEqual(
+            PassageReadingAvailability(alignmentBlockCount: 1)
+                .effectiveMode(for: .semanticAlignment),
+            .naturalTranslation
+        )
+    }
+
+    func testSwitchableAvailabilityPreservesRequestedMode() {
+        let availability = PassageReadingAvailability(alignmentBlockCount: 2)
+
+        XCTAssertEqual(
+            availability.effectiveMode(for: .naturalTranslation),
+            .naturalTranslation
+        )
+        XCTAssertEqual(
+            availability.effectiveMode(for: .semanticAlignment),
+            .semanticAlignment
+        )
+    }
+
+    func testSingleBlockActionTextUsesNaturalTranslation() {
+        let original = "One long grammatical sentence."
+        let passage = PassageLookupResult(
+            alignmentBlocks: [
+                .init(sourceSentenceIDs: [1], translation: "一条自然译文。")
+            ],
+            nuanceNote: nil,
+            literalGloss: nil
+        )
+        let effectiveMode = PassageReadingAvailability(alignmentBlockCount: 1)
+            .effectiveMode(for: .semanticAlignment)
+
+        XCTAssertEqual(
+            PassageVisibleContent.text(
+                for: effectiveMode,
+                originalText: original,
+                passage: passage
+            ),
+            passage.translation
+        )
+    }
+
     private func makePassageIdentity(
         originalText: String,
         translation: String,
