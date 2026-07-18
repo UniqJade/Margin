@@ -8,7 +8,7 @@ generation before calling that platform integration verified.
 | Platform | Status | Meaning |
 |---|---|---|
 | macOS | **Verified, shortcut path only** | Apple Books selection reached Margin through explicit `Control–Option–M` Accessibility-assisted Copy on the recorded configuration |
-| iOS/iPadOS | **Experimental** | App, Action Extension, and App Intent exist structurally, but Apple Books handoff has not been tested on a physical device |
+| iOS/iPadOS | **Tested unsupported on the recorded configuration** | Apple Books exposed neither Margin's Action Extension nor a selected-text Share Sheet Shortcut, so no one-action handoff was available |
 
 “Verified” applies only to the exact recorded OS, Books version, trigger, and
 selection cases. A successful build, registered Service, declared extension, or
@@ -43,16 +43,31 @@ Recorded on 2026-07-13 from installed metadata and command-line tools:
 |---|---|---|---|---|
 | macOS 26.5 (25F71) | 8.5 (6570) | Tested: registered and enabled under Text services | Tested unsupported in this host/version: the Books reading view did not offer enabled text Services for a selected word | Confirmed: select text, then press Control–Option–M (`⌃⌥M`); Margin performs Copy through Accessibility and reads only the newly copied selection |
 
+## Recorded iPad result
+
+Recorded on 2026-07-18:
+
+| Device | OS | Books | Control host | Apple Books Action Extension | Apple Books Shortcut input | One-action status |
+|---|---|---|---|---|---|---|
+| iPad (9th generation) | iPadOS 26.5 (23F77) | 8.5 | Notes displayed **Look Up with Margin** | Not exposed for a selected passage | Not exposed; the Books action list offered Copy but not the configured selected-text Shortcut | **Unsupported on this configuration** |
+
+Because Apple Books did not expose either trigger, word, sentence, and multiline
+payload accuracy could not be tested: every case failed at the host-availability
+gate before Margin could receive text. The Notes control confirms that the
+extension was installed and registered; it does not establish Books
+compatibility.
+
 ## Evidence and status boundaries
 
 - **Tested:** macOS Services registration is present in the built app metadata. A selected Apple Books passage can be handed to Margin with Control–Option–M on the recorded Mac configuration; this is the supported Books path for that configuration.
 - **Tested unsupported:** direct Services delivery from the Apple Books reading view was not exposed on Apple Books 8.5 / macOS 26.5. Registration alone does not establish host compatibility.
 - **Fallback:** when a Mac host does not expose the Service, Control–Option–M uses Accessibility to invoke Copy and consumes only a newly changed clipboard selection.
-- **Automated structural evidence only:** the iOS Action Extension declares text activation and contains plain-text and attributed-text handlers. This does not confirm that Apple Books supplies selected text to it.
-- **Untested:** iOS/iPadOS Apple Books Action Extension delivery remains a manual acceptance gate for each OS and Books version.
+- **Tested unsupported on the recorded iPad:** Apple Books exposed neither the installed text Action Extension nor the selected-text Shortcut. No direct payload reached Margin.
+- **Control evidence:** Notes exposed the same Action Extension, separating Apple Books host behavior from installation or registration failure.
+- **Rejected fallback:** copy-then-run clipboard lookup is technically possible but violates the one-action, stay-on-the-page acceptance criterion and is not a supported Margin workflow.
 
 Simulator compilation must be reported as “builds successfully,” not “works in
-Apple Books.” Mobile status remains Experimental until a physical-device row is
-recorded here.
-
-If iOS/iPadOS opens the action without text, mark the host handoff unsupported for that exact OS/Books combination. Do not add screenshot/OCR capture; use the included **Look Up English Text** App Intent in a pinned Share Sheet Shortcut.
+Apple Books.” The recorded failure is configuration-specific; a future iOS,
+iPadOS, or Books version requires a new physical-device matrix before its status
+changes. Do not add clipboard, screenshot, or OCR capture as a claimed one-action
+fallback.

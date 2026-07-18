@@ -85,7 +85,7 @@ audit_fixture="$temporary_root/audit-fixture"
 cat > "$audit_fixture/README.md" <<'README'
 # Margin
 
-macOS is the primary platform. iOS and iPadOS source support is Experimental.
+macOS is the primary and verified platform.
 README
 (
     cd "$audit_fixture"
@@ -126,12 +126,12 @@ README
     /bin/rm signing.p12
 
     /bin/cp README.md README.original
-    print 'macOS is the primary platform.' > README.md
+    print 'macOS is the primary platform. iPad support is Experimental.' > README.md
     if ./scripts/audit-public-repo.sh >"$temporary_root/platform.out" 2>&1; then
-        fail "audit accepted a README without the Experimental iOS declaration"
+        fail "audit accepted mobile-platform promotion in the Mac README"
     fi
-    /usr/bin/grep -q 'iOS/iPadOS support as Experimental' "$temporary_root/platform.out" \
-        || fail "audit did not explain the platform declaration failure"
+    /usr/bin/grep -q 'focused on the verified macOS experience' "$temporary_root/platform.out" \
+        || fail "audit did not explain the Mac-only README failure"
     /bin/mv README.original README.md
 
     /bin/dd if=/dev/zero of=large.bin bs=2048 count=1 2>/dev/null
