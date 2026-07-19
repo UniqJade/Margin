@@ -286,7 +286,7 @@ private struct PassageResultContent: View {
 
             alignmentLanguageRow(marker: "中") {
                 Text(block.translation)
-                    .font(.system(.title3, design: .serif))
+                    .chinesePassageTypography()
                     .lineSpacing(5)
                     .textSelection(.enabled)
             }
@@ -368,7 +368,7 @@ private struct PassageResultContent: View {
         let translation = ChineseTypographyNormalizer.normalize(passage.translation)
         return VStack(alignment: .leading, spacing: 14) {
             Text(translation)
-                .font(.system(.title3, design: .serif))
+                .chinesePassageTypography()
                 .lineSpacing(5)
                 .textSelection(.enabled)
                 .accessibilityLabel("Natural translation: \(translation)")

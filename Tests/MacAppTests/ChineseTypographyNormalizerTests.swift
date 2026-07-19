@@ -2,6 +2,11 @@ import LookupCore
 import XCTest
 @testable import Margin
 
+#if os(macOS)
+import AppKit
+import CoreText
+#endif
+
 final class ChineseTypographyNormalizerTests: XCTestCase {
     func testNormalizesChinesePunctuationAndHorizontalSpacing() {
         let input = "丘吉尔写道, 他能流利地表达意见 , 其力度无人能及!"
@@ -90,4 +95,19 @@ final class ChineseTypographyNormalizerTests: XCTestCase {
             "First sentence.\n他说，“第一句。”\n\nSecond sentence.\n接着，他写了第二句。"
         )
     }
+
+    #if os(macOS)
+    @MainActor
+    func testChineseReadingFontUsesProportionalCJKSpacing() {
+        let settings = ChineseReadingTypography.macFont.fontDescriptor
+            .fontAttributes[.featureSettings] as? [[NSFontDescriptor.FeatureKey: Int]]
+
+        XCTAssertTrue(
+            settings?.contains {
+                $0[.typeIdentifier] == kTextSpacingType
+                    && $0[.selectorIdentifier] == kProportionalTextSelector
+            } == true
+        )
+    }
+    #endif
 }
