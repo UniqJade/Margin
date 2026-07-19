@@ -68,7 +68,7 @@ enum PassageAlignmentPresentation {
             PassageAlignmentDisplayBlock(
                 sourceSentenceIDs: block.sourceSentenceIDs,
                 sourceText: block.sourceSentenceIDs.compactMap { sentences[$0] }.joined(separator: " "),
-                translation: block.translation
+                translation: ChineseTypographyNormalizer.normalize(block.translation)
             )
         }
     }
@@ -81,7 +81,7 @@ enum PassageVisibleContent {
         passage: PassageLookupResult
     ) -> String {
         guard mode == .bilingualView, !passage.alignmentBlocks.isEmpty else {
-            return passage.translation
+            return ChineseTypographyNormalizer.normalize(passage.translation)
         }
         return PassageAlignmentPresentation.blocks(
             originalText: originalText,
@@ -336,28 +336,10 @@ private struct PassageResultContent: View {
     }
 
     private var header: some View {
-        HStack(alignment: .top, spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("MARGIN")
-                    .font(.caption.weight(.bold))
-                    .tracking(2)
-                Text("Context without leaving the page")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .accessibilityElement(children: .combine)
-
-            Spacer()
-
-            if let onDismiss {
-                Button(action: onDismiss) {
-                    Image(systemName: "xmark")
-                }
-                .buttonStyle(.borderless)
-                .help("Close")
-                .accessibilityLabel("Close translation")
-            }
-        }
+        MarginBrandHeader(
+            onDismiss: onDismiss,
+            closeAccessibilityLabel: "Close translation"
+        )
     }
 
     private func sectionMarker(
@@ -383,12 +365,13 @@ private struct PassageResultContent: View {
     }
 
     private func naturalTranslation(_ passage: PassageLookupResult) -> some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text(passage.translation)
+        let translation = ChineseTypographyNormalizer.normalize(passage.translation)
+        return VStack(alignment: .leading, spacing: 14) {
+            Text(translation)
                 .font(.system(.title3, design: .serif))
                 .lineSpacing(5)
                 .textSelection(.enabled)
-                .accessibilityLabel("Natural translation: \(passage.translation)")
+                .accessibilityLabel("Natural translation: \(translation)")
 
             supplementaryDetails(includeLiteralGloss: true)
         }
@@ -444,7 +427,8 @@ private struct PassageResultContent: View {
 
     private func nonempty(_ value: String?) -> String? {
         guard let value else { return nil }
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = ChineseTypographyNormalizer.normalize(value)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
     }
 }

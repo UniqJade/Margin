@@ -82,22 +82,7 @@ struct LookupPanelView: View {
 
     private var standardPanel: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("MARGIN")
-                        .font(.caption.weight(.bold))
-                        .tracking(2)
-                    Text("Context without leaving the page")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                if let onDismiss {
-                    Button(action: onDismiss) { Image(systemName: "xmark") }
-                        .buttonStyle(.borderless)
-                        .help("Close")
-                }
-            }
+            MarginBrandHeader(onDismiss: onDismiss)
 
             if !session.selection.isEmpty {
                 Text(session.selection)

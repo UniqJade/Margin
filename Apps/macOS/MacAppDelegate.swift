@@ -44,6 +44,7 @@ final class MacAppDelegate: NSObject, NSApplicationDelegate {
     private lazy var panelController = LookupPanelController { [weak self] in
         self?.captureGeneration.invalidate()
     }
+    private var appearanceCoordinator: MacAppearanceCoordinator?
     private var selectionShortcut: SelectionShortcutController?
     private var captureGeneration = CaptureGenerationGate()
 
@@ -79,6 +80,7 @@ final class MacAppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         guard !launchEnvironment.isHostedUnitTest else { return }
+        appearanceCoordinator = MacAppearanceCoordinator(session: session)
         NSApplication.shared.servicesProvider = self
         NSUpdateDynamicServices()
         selectionShortcut = SelectionShortcutController { [weak self] in

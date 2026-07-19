@@ -71,8 +71,15 @@ private struct HistoryRow: View {
     private var summary: String {
         switch entry.result {
         case let .word(word):
-            word.partsOfSpeech.flatMap(\.senses).map(\.chineseDefinition).prefix(3).joined(separator: " · ")
-        case let .passage(passage): passage.translation
+            ChineseTypographyNormalizer.normalize(
+                word.partsOfSpeech
+                    .flatMap(\.senses)
+                    .map(\.chineseDefinition)
+                    .prefix(3)
+                    .joined(separator: " · ")
+            )
+        case let .passage(passage):
+            ChineseTypographyNormalizer.normalize(passage.translation)
         }
     }
 }

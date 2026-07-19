@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 import ApplePlatformSupport
 import Combine
 import LookupCore
@@ -12,6 +13,33 @@ final class LookupSessionTests: XCTestCase {
         XCTAssertNil(MarginAppearance.system.preferredColorScheme)
         XCTAssertEqual(MarginAppearance.light.preferredColorScheme, .light)
         XCTAssertEqual(MarginAppearance.dark.preferredColorScheme, .dark)
+    }
+
+    func testMacAppearancePolicyMapsSystemToNoOverride() {
+        XCTAssertNil(MacAppearancePolicy.appearanceName(for: .system))
+        XCTAssertEqual(MacAppearancePolicy.appearanceName(for: .light), .aqua)
+        XCTAssertEqual(MacAppearancePolicy.appearanceName(for: .dark), .darkAqua)
+    }
+
+    func testMacAppearanceCoordinatorAppliesEveryTransitionIncludingSystem() {
+        let defaults = makeTemporaryDefaults()
+        let session = LookupSession(
+            defaults: defaults,
+            vault: APIKeyVault(store: TestSecretStore()),
+            loadInitialHistory: false,
+            storageDirectory: makeTemporaryStorageDirectory()
+        )
+        let application = RecordingAppearanceApplication()
+        let coordinator = MacAppearanceCoordinator(session: session, application: application)
+
+        session.setAppearance(.dark)
+        session.setAppearance(.system)
+        session.setAppearance(.light)
+        session.setAppearance(.system)
+
+        let expected: [NSAppearance.Name?] = [nil, .darkAqua, nil, .aqua, nil]
+        XCTAssertEqual(application.appliedNames, expected)
+        withExtendedLifetime(coordinator) {}
     }
 
     func testAppearanceDefaultsToSystemWhenInjectedDefaultsAreEmpty() {
@@ -395,5 +423,16 @@ private actor CountingProvider: TranslationProvider {
         callCount += 1
         selections.append(request.text)
         return .word(.init(headword: request.text, pronunciations: [], partsOfSpeech: [], alternatives: []))
+    }
+}
+
+@MainActor
+private final class RecordingAppearanceApplication: MacApplicationAppearanceApplying {
+    private(set) var appliedNames: [NSAppearance.Name?] = []
+
+    var appearance: NSAppearance? {
+        didSet {
+            appliedNames.append(appearance?.name)
+        }
     }
 }

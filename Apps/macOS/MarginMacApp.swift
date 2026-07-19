@@ -14,11 +14,11 @@ struct MarginMacApp: App {
         }
         .menuBarExtraStyle(.menu)
 
-        Window("Settings", id: "settings") {
+        Settings {
             SettingsView(session: appDelegate.session)
                 .marginAppearance(session: appDelegate.session)
+                .frame(width: 520, height: 440)
         }
-        .defaultSize(width: 520, height: 440)
 
         Window("Lookup history", id: "history") {
             HistoryView(session: appDelegate.session)
@@ -40,9 +40,8 @@ private struct MenuBarContent: View {
             openWindow(id: "history")
             NSApplication.shared.activate(ignoringOtherApps: true)
         }
-        Button("Settings", systemImage: "gearshape") {
-            openWindow(id: "settings")
-            NSApplication.shared.activate(ignoringOtherApps: true)
+        SettingsLink {
+            Label("Settings", systemImage: "gearshape")
         }
         Divider()
         Text("In Apple Books: select text, then press ⌃⌥M.")

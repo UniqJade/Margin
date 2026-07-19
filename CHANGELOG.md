@@ -7,7 +7,7 @@ releases. Margin does not currently distribute public application binaries.
 
 ## [Unreleased]
 
-## [0.1.2] - 2026-07-18
+## [0.1.2] - 2026-07-19
 
 ### Changed
 
@@ -20,11 +20,19 @@ releases. Margin does not currently distribute public application binaries.
   visible English–Chinese pairs in Bilingual View.
 - Results with zero or one alignment block stay in Natural Translation without
   showing a mode switch or a technical alignment warning.
+- The standard macOS Settings scene adds **Margin → Settings…** and `⌘,` while
+  keeping the menu-bar Settings entry connected to the same window.
+- Follow System, Light, and Dark now use one app-wide macOS appearance source,
+  preventing title bars and SwiftUI content from retaining opposite themes.
+- Provider-returned Chinese uses a conservative local typography pass for
+  Chinese quotation marks, full-width punctuation, and stray CJK spacing in
+  displayed, copied, spoken, and saved-summary text.
+- Passage panels use the existing page icon beside a clearer Margin wordmark.
 
 ### Compatibility
 
-- Translation requests, structured provider output, cache keys, saved data,
-  Keychain behavior, and permission handling are unchanged.
+- Translation requests, structured provider output, raw cached and saved data,
+  cache keys, Keychain behavior, and permission handling are unchanged.
 
 ## [0.1.1] - 2026-07-18
 

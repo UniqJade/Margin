@@ -95,7 +95,8 @@ this release.
 Margin supports **Follow System**, **Light**, and **Dark**, using a restrained
 warm-orange accent. The interface is localized in English and Simplified Chinese
 and follows the device language. Translation remains English → Simplified
-Chinese.
+Chinese. Open the singleton Settings window from **Margin → Settings…**, with
+`⌘,`, or from the menu-bar Margin icon.
 
 ## Provider policy
 
