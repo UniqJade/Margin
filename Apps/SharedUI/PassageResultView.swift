@@ -64,11 +64,15 @@ enum PassageAlignmentPresentation {
         let sentences = Dictionary(
             uniqueKeysWithValues: PassageSentenceSegmenter.segment(originalText).map { ($0.id, $0.text) }
         )
-        return passage.alignmentBlocks.map { block in
-            PassageAlignmentDisplayBlock(
+        return passage.alignmentBlocks.compactMap { block in
+            let translation = ChineseTypographyNormalizer.normalize(block.translation)
+            guard !translation.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                return nil
+            }
+            return PassageAlignmentDisplayBlock(
                 sourceSentenceIDs: block.sourceSentenceIDs,
                 sourceText: block.sourceSentenceIDs.compactMap { sentences[$0] }.joined(separator: " "),
-                translation: ChineseTypographyNormalizer.normalize(block.translation)
+                translation: translation
             )
         }
     }
@@ -151,7 +155,12 @@ private struct PassageResultContent: View {
     @State private var presentationState = PassagePresentationState()
 
     private var readingAvailability: PassageReadingAvailability {
-        PassageReadingAvailability(alignmentBlockCount: passage.alignmentBlocks.count)
+        PassageReadingAvailability(
+            alignmentBlockCount: PassageAlignmentPresentation.blocks(
+                originalText: originalText,
+                passage: passage
+            ).count
+        )
     }
 
     private var effectiveReadingMode: PassageReadingMode {

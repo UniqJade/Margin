@@ -155,6 +155,27 @@ final class LookupSessionTests: XCTestCase {
         XCTAssertEqual(session.phase, .result(newOutcome))
     }
 
+    func testLookupRemovesAppleBooksAttributionFromDisplayedSelection() async throws {
+        let operation = ControlledLookupOperation()
+        let session = testSession(lookupOperation: { selection in
+            try await operation.perform(selection)
+        })
+        addTeardownBlock { await operation.cancelAll() }
+        let pollutedSelection = """
+        First sentence.
+        Excerpt From
+        Example Book
+        Example Author
+        This material may be protected by copyright.
+        """
+
+        session.lookup(selection: pollutedSelection)
+
+        try await operation.waitUntilStarted("First sentence.")
+        XCTAssertEqual(session.selection, "First sentence.")
+        await operation.resume("First sentence.", with: .failure(CancellationError()))
+    }
+
     func testOlderFailureCannotOverwriteNewerLoading() async throws {
         let operation = ControlledLookupOperation()
         let session = testSession(lookupOperation: { selection in

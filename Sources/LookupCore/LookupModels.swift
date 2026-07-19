@@ -13,7 +13,8 @@ public struct LookupRequest: Codable, Equatable, Sendable {
     public let style: TranslationStyle
 
     public init(selection: String) throws {
-        let normalized = try LookupInputNormalizer.normalize(selection)
+        let selectionWithoutAttribution = AppleBooksAttributionCleaner.removingFooter(from: selection)
+        let normalized = try LookupInputNormalizer.normalize(selectionWithoutAttribution)
         self.init(
             text: normalized,
             kind: LookupClassifier.classify(normalized),

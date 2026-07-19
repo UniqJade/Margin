@@ -1,4 +1,5 @@
 import Foundation
+import LookupCore
 
 enum ChineseTypographyNormalizer {
     private struct OpenQuote {
@@ -31,7 +32,8 @@ enum ChineseTypographyNormalizer {
     ]
 
     static func normalize(_ text: String) -> String {
-        let canonical = text.precomposedStringWithCanonicalMapping
+        let canonical = AppleBooksAttributionCleaner.removingFooter(from: text)
+            .precomposedStringWithCanonicalMapping
         var characters = Array(canonical)
         normalizeQuotationMarks(in: &characters)
         normalizePunctuation(in: &characters)

@@ -30,12 +30,17 @@ releases. Margin does not currently distribute public application binaries.
 - Chinese passage text keeps its Songti reading face on macOS while applying
   local spacing only after Chinese commas, preventing them from looking like
   inserted spaces without changing the punctuation character itself.
+- Apple Books attribution footers such as “Excerpt From … This material may be
+  protected by copyright” are removed before translation and from returned or
+  previously cached passage results. Legacy cached translations are reused and
+  cleaned locally without another provider request.
 - Passage panels use the existing page icon beside a clearer Margin wordmark.
 
 ### Compatibility
 
-- Translation requests, structured provider output, raw cached and saved data,
-  cache keys, Keychain behavior, and permission handling are unchanged.
+- Structured provider output, cache and saved-data formats, Keychain behavior,
+  and permission handling are unchanged. Only recognized terminal Apple Books
+  attribution metadata is excluded from selections and passage results.
 
 ## [0.1.1] - 2026-07-18
 

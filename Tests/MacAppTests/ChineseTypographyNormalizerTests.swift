@@ -95,6 +95,54 @@ final class ChineseTypographyNormalizerTests: XCTestCase {
         )
     }
 
+    func testDisplayNormalizationRemovesCachedAppleBooksAttributionFooter() {
+        let polluted = "正文译文。摘录来自 Churchill Winston Churchill 此内容可能受版权保护。"
+
+        XCTAssertEqual(ChineseTypographyNormalizer.normalize(polluted), "正文译文。")
+    }
+
+    func testBilingualPresentationDropsCachedAttributionOnlyBlock() {
+        let original = """
+        First sentence.
+        Excerpt From Example Book Example Author This material may be protected by copyright.
+        """
+        let passage = PassageLookupResult(
+            alignmentBlocks: [
+                .init(sourceSentenceIDs: [1], translation: "正文译文。"),
+                .init(
+                    sourceSentenceIDs: [2],
+                    translation: "摘录来自 Example Book Example Author 此内容可能受版权保护。"
+                ),
+            ],
+            nuanceNote: nil,
+            literalGloss: nil
+        )
+
+        XCTAssertEqual(
+            PassageVisibleContent.text(
+                for: .naturalTranslation,
+                originalText: original,
+                passage: passage
+            ),
+            "正文译文。"
+        )
+        XCTAssertEqual(
+            PassageVisibleContent.text(
+                for: .bilingualView,
+                originalText: original,
+                passage: passage
+            ),
+            "First sentence.\n正文译文。"
+        )
+        XCTAssertEqual(
+            PassageAlignmentPresentation.blocks(
+                originalText: original,
+                passage: passage
+            ).count,
+            1
+        )
+    }
+
     #if os(macOS)
     @MainActor
     func testChineseReadingTypographyPreservesSongtiAndCompressesOnlyCommaSpacing() {

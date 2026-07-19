@@ -46,17 +46,36 @@ public actor LookupEngine {
         let cached = await cache.value(for: key)
         try Task.checkCancellation()
         if let cached {
+            let cleaned = AppleBooksAttributionCleaner.removingFooter(from: cached)
+            if cleaned != cached {
+                try await cacheBestEffort(cleaned, for: key)
+            }
             return LookupOutcome(
                 id: UUID(),
                 request: request,
-                result: cached,
+                result: cleaned,
                 providerName: provider.displayName,
                 wasCached: true
             )
         }
 
-        let result = try await provider.translate(request)
+        if let legacyKey = legacyCacheKey(for: selection, canonicalRequest: request),
+           let legacyCached = await cache.value(for: legacyKey) {
+            try Task.checkCancellation()
+            let cleaned = AppleBooksAttributionCleaner.removingFooter(from: legacyCached)
+            try await cacheBestEffort(cleaned, for: key)
+            return LookupOutcome(
+                id: UUID(),
+                request: request,
+                result: cleaned,
+                providerName: provider.displayName,
+                wasCached: true
+            )
+        }
+
+        let providerResult = try await provider.translate(request)
         try Task.checkCancellation()
+        let result = AppleBooksAttributionCleaner.removingFooter(from: providerResult)
         try await cacheBestEffort(result, for: key)
         try Task.checkCancellation()
         return LookupOutcome(
@@ -76,6 +95,27 @@ public actor LookupEngine {
         } catch {
             // Cache persistence is best effort and must not fail a successful lookup.
         }
+    }
+
+    private func legacyCacheKey(
+        for selection: String,
+        canonicalRequest: LookupRequest
+    ) -> String? {
+        guard let legacyText = try? LookupInputNormalizer.normalize(selection) else {
+            return nil
+        }
+        guard legacyText != canonicalRequest.text else { return nil }
+        let legacyRequest = LookupRequest(
+            text: legacyText,
+            kind: LookupClassifier.classify(legacyText),
+            sourceLanguage: canonicalRequest.sourceLanguage,
+            targetLanguage: canonicalRequest.targetLanguage,
+            style: canonicalRequest.style
+        )
+        return LookupCacheKey.make(
+            request: legacyRequest,
+            providerIdentifier: providerIdentifier
+        )
     }
 
 }
