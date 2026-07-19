@@ -54,12 +54,13 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
         let state = PassagePresentationState()
 
         XCTAssertEqual(state.readingMode, .naturalTranslation)
+        XCTAssertFalse(state.showsOriginalText)
         XCTAssertFalse(state.showsLiteralView)
         XCTAssertEqual(state.readingHeight, 0)
         XCTAssertEqual(state.actionHeight, 0)
     }
 
-    func testPassagePresentationIdentityChangesWithSemanticAlignment() {
+    func testPassagePresentationIdentityChangesWithAlignmentBlocks() {
         let first = makePassageIdentity(
             originalText: "Same passage",
             translation: "同一译文",
@@ -90,33 +91,30 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
             "第一句。第二句。"
         )
         XCTAssertEqual(
-            PassageVisibleContent.text(for: .semanticAlignment, originalText: original, passage: passage),
+            PassageVisibleContent.text(for: .bilingualView, originalText: original, passage: passage),
             "First sentence.\n第一句。\n\nSecond sentence.\n第二句。"
         )
     }
 
     func testReadingAvailabilityFollowsAlignmentBlockCount() {
-        let unavailable = PassageReadingAvailability(alignmentBlockCount: 0)
+        let noAlignment = PassageReadingAvailability(alignmentBlockCount: 0)
         let naturalOnly = PassageReadingAvailability(alignmentBlockCount: 1)
         let switchable = PassageReadingAvailability(alignmentBlockCount: 2)
 
-        XCTAssertTrue(unavailable.showsUnavailableMessage)
-        XCTAssertFalse(unavailable.showsModePicker)
-        XCTAssertFalse(naturalOnly.showsUnavailableMessage)
+        XCTAssertFalse(noAlignment.showsModePicker)
         XCTAssertFalse(naturalOnly.showsModePicker)
-        XCTAssertFalse(switchable.showsUnavailableMessage)
         XCTAssertTrue(switchable.showsModePicker)
     }
 
     func testUnavailableAndSingleBlockAvailabilityClampToNaturalTranslation() {
         XCTAssertEqual(
             PassageReadingAvailability(alignmentBlockCount: 0)
-                .effectiveMode(for: .semanticAlignment),
+                .effectiveMode(for: .bilingualView),
             .naturalTranslation
         )
         XCTAssertEqual(
             PassageReadingAvailability(alignmentBlockCount: 1)
-                .effectiveMode(for: .semanticAlignment),
+                .effectiveMode(for: .bilingualView),
             .naturalTranslation
         )
     }
@@ -129,8 +127,8 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
             .naturalTranslation
         )
         XCTAssertEqual(
-            availability.effectiveMode(for: .semanticAlignment),
-            .semanticAlignment
+            availability.effectiveMode(for: .bilingualView),
+            .bilingualView
         )
     }
 
@@ -144,7 +142,7 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
             literalGloss: nil
         )
         let effectiveMode = PassageReadingAvailability(alignmentBlockCount: 1)
-            .effectiveMode(for: .semanticAlignment)
+            .effectiveMode(for: .bilingualView)
 
         XCTAssertEqual(
             PassageVisibleContent.text(
@@ -154,6 +152,31 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
             ),
             passage.translation
         )
+    }
+
+    func testBilingualBlocksKeepProviderOrderAndDescribeSentenceRanges() {
+        let original = "First sentence. Second sentence. Third sentence."
+        let passage = PassageLookupResult(
+            alignmentBlocks: [
+                .init(sourceSentenceIDs: [1], translation: "第一句。"),
+                .init(sourceSentenceIDs: [2, 3], translation: "第二、三句。"),
+            ],
+            nuanceNote: nil,
+            literalGloss: nil
+        )
+
+        let blocks = PassageAlignmentPresentation.blocks(
+            originalText: original,
+            passage: passage
+        )
+
+        XCTAssertEqual(blocks.map(\.sourceSentenceIDs), [[1], [2, 3]])
+        XCTAssertEqual(blocks.map(\.sentenceLabel), ["Sentence 1", "Sentences 2–3"])
+        XCTAssertEqual(
+            blocks.map(\.sourceText),
+            ["First sentence.", "Second sentence. Third sentence."]
+        )
+        XCTAssertEqual(blocks.map(\.translation), ["第一句。", "第二、三句。"])
     }
 
     private func makePassageIdentity(

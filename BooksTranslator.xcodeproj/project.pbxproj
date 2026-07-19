@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0355C83BA3E283AE0F05F0C8 /* PassageResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF2E23AA9188863147058C /* PassageResultView.swift */; };
 		039BA62229986F04E34D4BFA /* CollapsibleOriginalText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3775C7FE961E4648E285574E /* CollapsibleOriginalText.swift */; };
+		057109B9DE19F0F0BC41BB28 /* ChineseReadingTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC6676EEA8095ADF14712F4 /* ChineseReadingTypography.swift */; };
 		0729773C1F6C2CEDF2E84990 /* MarginAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6017A3A136523AB46F2853D /* MarginAppearance.swift */; };
 		077C386CBDF9FCD841661F0C /* ProviderPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E15B43012C102811A7162B /* ProviderPreferences.swift */; };
 		08DB5A961EF0BD7DDB30D940 /* ProviderAndFirstRunStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A6921B10221D0887CEAA5F /* ProviderAndFirstRunStateTests.swift */; };
@@ -21,6 +22,7 @@
 		259E0DA285172746E0A1C3F8 /* LookupActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B262964B385723A6E82502 /* LookupActionBar.swift */; };
 		267252E13BE43880F994B370 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538605A37BA102FA39825180 /* SettingsView.swift */; };
 		2708D3728885F6583147381B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538605A37BA102FA39825180 /* SettingsView.swift */; };
+		2738C25D4BEBACC812AC7923 /* ChineseTypographyNormalizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BB07520497349D58053D0A /* ChineseTypographyNormalizerTests.swift */; };
 		2892BEC2A0493AD9D04C3913 /* PassageResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF2E23AA9188863147058C /* PassageResultView.swift */; };
 		2AA9BABA4DF82FA7CDA037B2 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F959CC6247AA7244281FA17 /* HistoryView.swift */; };
 		2AC917CD51B3A3EBE8B56B2D /* NaturalHeightReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCA11CB3A33021E2BEC55387 /* NaturalHeightReader.swift */; };
@@ -28,6 +30,7 @@
 		3149FE623A58AC63A10998FD /* WordDictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100634C9A607BC8C27B4682E /* WordDictionaryView.swift */; };
 		33BB1B4A9FBAD10DCBB9D5DD /* LookupSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3B94EFBA882C1CC0886DB8 /* LookupSession.swift */; };
 		3BA12369D466F6229A86E220 /* ApplePlatformSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 71213D22FDE4E09B53DA7065 /* ApplePlatformSupport */; };
+		3C0BD87A4E2AB685B756FFAF /* ChineseReadingTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC6676EEA8095ADF14712F4 /* ChineseReadingTypography.swift */; };
 		3C28DD21846B39DB5EB9455F /* CollapsibleOriginalText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3775C7FE961E4648E285574E /* CollapsibleOriginalText.swift */; };
 		406F7E8419761CFFD901C2C9 /* ApplePlatformSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 7E3515AE9AE953804748B097 /* ApplePlatformSupport */; };
 		42F3BA723982B03AB7328575 /* LookupActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B262964B385723A6E82502 /* LookupActionBar.swift */; };
@@ -38,14 +41,20 @@
 		59910BBDBAF64C955E88B317 /* FirstRunSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D71681F286CF0747AF977 /* FirstRunSetupView.swift */; };
 		59A11758653F9D34700A956D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 41C78232C67A2B4185F2FDEC /* Assets.xcassets */; };
 		59CCC86AF31786F8BA3CC515 /* TranslationDiagnosticStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B933DAEC7C76C044054D88 /* TranslationDiagnosticStoreTests.swift */; };
+		5E03469DFC984D46AC7B3A0D /* ChineseTypographyNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 755BE38DE7A79F5FF3C1D7FE /* ChineseTypographyNormalizer.swift */; };
 		5F187DF0E4C19FCD0A0829AE /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F959CC6247AA7244281FA17 /* HistoryView.swift */; };
+		6093CE6C8A6B71FCCF9551AB /* MarginBrandHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824217B9DDA1C7A5AB9F59EA /* MarginBrandHeader.swift */; };
 		639BA6043C34CCA155125006 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 5764C51FC64B75AE840806A1 /* Localizable.xcstrings */; };
 		64A2E53B846A51DA535B1F04 /* SelectionShortcutController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94688371B2AEE9F5501A580 /* SelectionShortcutController.swift */; };
 		68E2D7C87F3E9A801019C3EC /* FirstRunState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE55784CDE25D15ED4C22983 /* FirstRunState.swift */; };
+		6C36E3C26B28DB7BF59B3572 /* MacAppearanceCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E4F84877432BC31643AC714 /* MacAppearanceCoordinator.swift */; };
 		71840EB63477EBDDEC7F8AE1 /* WordDictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100634C9A607BC8C27B4682E /* WordDictionaryView.swift */; };
 		733C825F2F46B04BCF158C4C /* LookupSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99D8886475E2D9CBC2966EC /* LookupSessionTests.swift */; };
 		74D191A36375E489192EAC21 /* FirstRunSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623D71681F286CF0747AF977 /* FirstRunSetupView.swift */; };
+		7581516B1F5E9B67C11A16F1 /* ChineseTypographyNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 755BE38DE7A79F5FF3C1D7FE /* ChineseTypographyNormalizer.swift */; };
+		774289D94739A110E2732B89 /* MarginBrandHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824217B9DDA1C7A5AB9F59EA /* MarginBrandHeader.swift */; };
 		7A56B5490FB5E2BC232FEC2B /* FirstRunState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE55784CDE25D15ED4C22983 /* FirstRunState.swift */; };
+		7A705B399E0BD5EADABD8BCA /* ChineseTypographyNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 755BE38DE7A79F5FF3C1D7FE /* ChineseTypographyNormalizer.swift */; };
 		7DA7348E003B8E776DA3AC3F /* ProviderPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E15B43012C102811A7162B /* ProviderPreferences.swift */; };
 		7DEC3F6141756E0F6D56AC62 /* LookupSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3B94EFBA882C1CC0886DB8 /* LookupSession.swift */; };
 		7E816CEF18FEBBAAE44C8208 /* TranslationDiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4DE1D7ADF1C3EC7008B1BF7 /* TranslationDiagnosticStore.swift */; };
@@ -53,6 +62,8 @@
 		7F84357E20C576BF2679CA22 /* SharedConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38440553944ECCB39EE7AC3 /* SharedConfiguration.swift */; };
 		80C6B639B6C24B0761633B45 /* LookupActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B262964B385723A6E82502 /* LookupActionBar.swift */; };
 		858E0DD63C0B232441174EBE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 41C78232C67A2B4185F2FDEC /* Assets.xcassets */; };
+		871A65A16FBFA0D7137085F4 /* MarginBrandHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 824217B9DDA1C7A5AB9F59EA /* MarginBrandHeader.swift */; };
+		89B377664789055ABC8A8015 /* ChineseReadingTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC6676EEA8095ADF14712F4 /* ChineseReadingTypography.swift */; };
 		8C50FD3D799B178EE5B28299 /* MarginIOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1FD77B2C0E6FE8A8E67B09 /* MarginIOSApp.swift */; };
 		8C88E8837919D565E09F891B /* TranslationDiagnosticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4DE1D7ADF1C3EC7008B1BF7 /* TranslationDiagnosticStore.swift */; };
 		905B9057E883698FFF8C11B2 /* ApplePlatformSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 4E1B5026EB064F8D62249D0D /* ApplePlatformSupport */; };
@@ -120,8 +131,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0CC6676EEA8095ADF14712F4 /* ChineseReadingTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChineseReadingTypography.swift; sourceTree = "<group>"; };
 		100634C9A607BC8C27B4682E /* WordDictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordDictionaryView.swift; sourceTree = "<group>"; };
 		2C2DB88ED13060A5CEA30F75 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/ServicesMenu.strings; sourceTree = "<group>"; };
+		2E4F84877432BC31643AC714 /* MacAppearanceCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacAppearanceCoordinator.swift; sourceTree = "<group>"; };
 		2F959CC6247AA7244281FA17 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		3092004A9917DE53548CFB52 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		3775C7FE961E4648E285574E /* CollapsibleOriginalText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollapsibleOriginalText.swift; sourceTree = "<group>"; };
@@ -140,6 +153,8 @@
 		6421E13BC2C6D4FE88C460AB /* MarginMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarginMacApp.swift; sourceTree = "<group>"; };
 		67FC58E89AD76D4D6FBDF8FE /* BooksTranslatorAction.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = BooksTranslatorAction.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		717DF21F8B565B78F34399FA /* BuildDefaults.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildDefaults.xcconfig; sourceTree = "<group>"; };
+		755BE38DE7A79F5FF3C1D7FE /* ChineseTypographyNormalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChineseTypographyNormalizer.swift; sourceTree = "<group>"; };
+		824217B9DDA1C7A5AB9F59EA /* MarginBrandHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarginBrandHeader.swift; sourceTree = "<group>"; };
 		8520DB4A9B295D94A252AFF5 /* MacPlatformConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacPlatformConfigurationTests.swift; sourceTree = "<group>"; };
 		8570F388CF2A101CD7074CF4 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/AppShortcuts.strings"; sourceTree = "<group>"; };
 		96F51998ADEE8B06A0567859 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ServicesMenu.strings"; sourceTree = "<group>"; };
@@ -150,6 +165,7 @@
 		9F5C8D84DCA35F87FA0818E3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/AppShortcuts.strings; sourceTree = "<group>"; };
 		A5E15B43012C102811A7162B /* ProviderPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderPreferences.swift; sourceTree = "<group>"; };
 		A94688371B2AEE9F5501A580 /* SelectionShortcutController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionShortcutController.swift; sourceTree = "<group>"; };
+		A9BB07520497349D58053D0A /* ChineseTypographyNormalizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChineseTypographyNormalizerTests.swift; sourceTree = "<group>"; };
 		AE6FA14264A85886F0521937 /* LookupPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LookupPanelView.swift; sourceTree = "<group>"; };
 		B99D8886475E2D9CBC2966EC /* LookupSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LookupSessionTests.swift; sourceTree = "<group>"; };
 		BD2CBFC0643777A530AAD330 /* LookupPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LookupPanel.swift; sourceTree = "<group>"; };
@@ -293,6 +309,7 @@
 			children = (
 				BD2CBFC0643777A530AAD330 /* LookupPanel.swift */,
 				F22099BC0BCF2CA33B3DF5FB /* MacAppDelegate.swift */,
+				2E4F84877432BC31643AC714 /* MacAppearanceCoordinator.swift */,
 				6421E13BC2C6D4FE88C460AB /* MarginMacApp.swift */,
 				A94688371B2AEE9F5501A580 /* SelectionShortcutController.swift */,
 			);
@@ -313,6 +330,8 @@
 		B637357AB7F40BA7B4245CAF /* SharedUI */ = {
 			isa = PBXGroup;
 			children = (
+				0CC6676EEA8095ADF14712F4 /* ChineseReadingTypography.swift */,
+				755BE38DE7A79F5FF3C1D7FE /* ChineseTypographyNormalizer.swift */,
 				3775C7FE961E4648E285574E /* CollapsibleOriginalText.swift */,
 				623D71681F286CF0747AF977 /* FirstRunSetupView.swift */,
 				DE55784CDE25D15ED4C22983 /* FirstRunState.swift */,
@@ -322,6 +341,7 @@
 				982DE9073815963BC20B82C0 /* LookupRuntime.swift */,
 				EF3B94EFBA882C1CC0886DB8 /* LookupSession.swift */,
 				D6017A3A136523AB46F2853D /* MarginAppearance.swift */,
+				824217B9DDA1C7A5AB9F59EA /* MarginBrandHeader.swift */,
 				FCA11CB3A33021E2BEC55387 /* NaturalHeightReader.swift */,
 				3CEF2E23AA9188863147058C /* PassageResultView.swift */,
 				A5E15B43012C102811A7162B /* ProviderPreferences.swift */,
@@ -363,6 +383,7 @@
 		FD0483381DD1BC16BD017E39 /* MacAppTests */ = {
 			isa = PBXGroup;
 			children = (
+				A9BB07520497349D58053D0A /* ChineseTypographyNormalizerTests.swift */,
 				51391B3ADA7067E3377F09A0 /* LookupPanelTests.swift */,
 				B99D8886475E2D9CBC2966EC /* LookupSessionTests.swift */,
 				59850CC87D55FDF104588C8D /* MacAppDelegateTests.swift */,
@@ -552,6 +573,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2738C25D4BEBACC812AC7923 /* ChineseTypographyNormalizerTests.swift in Sources */,
 				CC524A8637845545FBFDFD44 /* LookupPanelTests.swift in Sources */,
 				733C825F2F46B04BCF158C4C /* LookupSessionTests.swift in Sources */,
 				DCA6D73086A7FBCB6B303470 /* MacAppDelegateTests.swift in Sources */,
@@ -568,6 +590,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				89B377664789055ABC8A8015 /* ChineseReadingTypography.swift in Sources */,
+				5E03469DFC984D46AC7B3A0D /* ChineseTypographyNormalizer.swift in Sources */,
 				E00C0B6348C483DF7AC6D561 /* CollapsibleOriginalText.swift in Sources */,
 				C6C2FA67B126046F839DB609 /* FirstRunSetupView.swift in Sources */,
 				D9C1356196322A8C5C4456E9 /* FirstRunState.swift in Sources */,
@@ -578,6 +602,7 @@
 				7DEC3F6141756E0F6D56AC62 /* LookupSession.swift in Sources */,
 				1DDB7DFDADD8A92C3C0F9EE8 /* LookupTextIntent.swift in Sources */,
 				0729773C1F6C2CEDF2E84990 /* MarginAppearance.swift in Sources */,
+				774289D94739A110E2732B89 /* MarginBrandHeader.swift in Sources */,
 				8C50FD3D799B178EE5B28299 /* MarginIOSApp.swift in Sources */,
 				BF3CC44750637DBCAC5C9A01 /* NaturalHeightReader.swift in Sources */,
 				0355C83BA3E283AE0F05F0C8 /* PassageResultView.swift in Sources */,
@@ -594,6 +619,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				BA7CB52B8C6C8426492A64B6 /* ActionViewController.swift in Sources */,
+				3C0BD87A4E2AB685B756FFAF /* ChineseReadingTypography.swift in Sources */,
+				7A705B399E0BD5EADABD8BCA /* ChineseTypographyNormalizer.swift in Sources */,
 				3C28DD21846B39DB5EB9455F /* CollapsibleOriginalText.swift in Sources */,
 				74D191A36375E489192EAC21 /* FirstRunSetupView.swift in Sources */,
 				68E2D7C87F3E9A801019C3EC /* FirstRunState.swift in Sources */,
@@ -603,6 +630,7 @@
 				58A3E5E7DEB5FD45A14C68C5 /* LookupRuntime.swift in Sources */,
 				B62F27FBD3DC21AE8C2A7CDE /* LookupSession.swift in Sources */,
 				BF1326E631F3C76BA0AE2296 /* MarginAppearance.swift in Sources */,
+				6093CE6C8A6B71FCCF9551AB /* MarginBrandHeader.swift in Sources */,
 				2AC917CD51B3A3EBE8B56B2D /* NaturalHeightReader.swift in Sources */,
 				FFF6B6DD67A9EA3B2DB0D52B /* PassageResultView.swift in Sources */,
 				7DA7348E003B8E776DA3AC3F /* ProviderPreferences.swift in Sources */,
@@ -617,6 +645,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				057109B9DE19F0F0BC41BB28 /* ChineseReadingTypography.swift in Sources */,
+				7581516B1F5E9B67C11A16F1 /* ChineseTypographyNormalizer.swift in Sources */,
 				039BA62229986F04E34D4BFA /* CollapsibleOriginalText.swift in Sources */,
 				59910BBDBAF64C955E88B317 /* FirstRunSetupView.swift in Sources */,
 				7A56B5490FB5E2BC232FEC2B /* FirstRunState.swift in Sources */,
@@ -627,7 +657,9 @@
 				181EC449E2703775734686CA /* LookupRuntime.swift in Sources */,
 				33BB1B4A9FBAD10DCBB9D5DD /* LookupSession.swift in Sources */,
 				AA076C3B2391750BAE6A1421 /* MacAppDelegate.swift in Sources */,
+				6C36E3C26B28DB7BF59B3572 /* MacAppearanceCoordinator.swift in Sources */,
 				DE79378F6D5F2901FE2794E4 /* MarginAppearance.swift in Sources */,
+				871A65A16FBFA0D7137085F4 /* MarginBrandHeader.swift in Sources */,
 				F907402F02ACC2A6E8929871 /* MarginMacApp.swift in Sources */,
 				7EB334A9506FEDA48C7E18E2 /* NaturalHeightReader.swift in Sources */,
 				2892BEC2A0493AD9D04C3913 /* PassageResultView.swift in Sources */,
@@ -849,7 +881,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -913,7 +945,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

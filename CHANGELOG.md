@@ -7,6 +7,41 @@ releases. Margin does not currently distribute public application binaries.
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-07-19
+
+### Changed
+
+- Natural Translation now leads with the complete Chinese passage and keeps the
+  English original inside a collapsed disclosure.
+- Semantic Alignment has become Bilingual View: numbered sentence or
+  sentence-range cards now separate English and Chinese with clearer hierarchy,
+  spacing, and orange navigation markers.
+- Copy and Speak use only the Chinese passage in Natural Translation and the
+  visible English–Chinese pairs in Bilingual View.
+- Results with zero or one alignment block stay in Natural Translation without
+  showing a mode switch or a technical alignment warning.
+- The standard macOS Settings scene adds **Margin → Settings…** and `⌘,` while
+  keeping the menu-bar Settings entry connected to the same window.
+- Follow System, Light, and Dark now use one app-wide macOS appearance source,
+  preventing title bars and SwiftUI content from retaining opposite themes.
+- Provider-returned Chinese uses a conservative local typography pass for
+  Chinese quotation marks, full-width punctuation, and stray CJK spacing in
+  displayed, copied, spoken, and saved-summary text.
+- Chinese passage text keeps its Songti reading face on macOS while applying
+  local spacing only after Chinese commas, preventing them from looking like
+  inserted spaces without changing the punctuation character itself.
+- Apple Books attribution footers such as “Excerpt From … This material may be
+  protected by copyright” are removed before translation and from returned or
+  previously cached passage results. Legacy cached translations are reused and
+  cleaned locally without another provider request.
+- Passage panels use the existing page icon beside a clearer Margin wordmark.
+
+### Compatibility
+
+- Structured provider output, cache and saved-data formats, Keychain behavior,
+  and permission handling are unchanged. Only recognized terminal Apple Books
+  attribution metadata is excluded from selections and passage results.
+
 ## [0.1.1] - 2026-07-18
 
 ### Changed
@@ -62,6 +97,7 @@ releases. Margin does not currently distribute public application binaries.
 - iPhone/iPad Apple Books selection delivery remains unverified on physical
   devices.
 
-[Unreleased]: https://github.com/UniqJade/Margin/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/UniqJade/Margin/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/UniqJade/Margin/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/UniqJade/Margin/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/UniqJade/Margin/releases/tag/v0.1.0

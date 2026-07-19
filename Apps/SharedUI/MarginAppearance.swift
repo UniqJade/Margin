@@ -80,10 +80,16 @@ enum MarginTheme {
 private struct MarginAppearanceModifier: ViewModifier {
     @ObservedObject var session: LookupSession
 
+    @ViewBuilder
     func body(content: Content) -> some View {
+        #if os(macOS)
+        content
+            .tint(MarginTheme.accent)
+        #else
         content
             .preferredColorScheme(session.appearance.preferredColorScheme)
             .tint(MarginTheme.accent)
+        #endif
     }
 }
 

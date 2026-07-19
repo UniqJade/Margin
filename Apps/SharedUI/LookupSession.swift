@@ -79,25 +79,30 @@ final class LookupSession: ObservableObject {
     }
 
     func lookup(selection newSelection: String? = nil) {
-        if let newSelection { selection = newSelection }
+        let capturedSelection = newSelection ?? selection
+        selection = AppleBooksAttributionCleaner.removingFooter(from: capturedSelection)
         retryLookupPolicy = .standard
-        beginLookup(policy: .standard)
+        beginLookup(policy: .standard, capturedSelection: capturedSelection)
     }
 
-    private func beginLookup(policy: ProviderLookupPolicy) {
+    private func beginLookup(
+        policy: ProviderLookupPolicy,
+        capturedSelection: String? = nil
+    ) {
         let generation = invalidateLookup()
         loadingProgress = .readingContext
         failureTechnicalDetail = nil
         phase = .loading
-        let currentSelection = selection
+        let displayedSelection = selection
+        let providerSelection = capturedSelection ?? displayedSelection
         lookupTask = Task { [weak self] in
             guard let self else { return }
             do {
                 let outcome: LookupOutcome
                 if let lookupOperation = self.lookupOperation {
-                    outcome = try await lookupOperation(currentSelection)
+                    outcome = try await lookupOperation(displayedSelection)
                 } else {
-                    outcome = try await self.performLookup(selection: currentSelection, policy: policy)
+                    outcome = try await self.performLookup(selection: providerSelection, policy: policy)
                 }
                 guard self.isCurrent(generation) else { return }
                 self.retryLookupPolicy = .standard

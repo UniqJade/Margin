@@ -49,6 +49,103 @@ final class LookupEngineTests: XCTestCase {
         XCTAssertFalse(FileManager.default.fileExists(atPath: directory.appending(path: "history.json").path))
     }
 
+    func testEngineReusesAndCleansLegacyCacheWithoutCallingProvider() async throws {
+        let directory = try temporaryDirectory()
+        let cache = LookupCache(fileURL: directory.appending(path: "cache.json"))
+        let provider = CountingProvider(result: nil)
+        let providerIdentifier = "mock:v1"
+        let selection = """
+        First sentence.
+        Excerpt From
+        Example Book
+        Example Author
+        This material may be protected by copyright.
+        """
+        let legacyText = try LookupInputNormalizer.normalize(selection)
+        let legacyRequest = LookupRequest(
+            text: legacyText,
+            kind: .passage,
+            sourceLanguage: "en",
+            targetLanguage: "zh-Hans",
+            style: .naturalPublishedProse
+        )
+        let pollutedResult = LookupResult.passage(PassageLookupResult(
+            alignmentBlocks: [
+                .init(sourceSentenceIDs: [1], translation: "正文译文。"),
+                .init(
+                    sourceSentenceIDs: [2],
+                    translation: "摘录来自 Example Book Example Author 此内容可能受版权保护。"
+                ),
+            ],
+            nuanceNote: nil,
+            literalGloss: nil
+        ))
+        try await cache.insert(
+            pollutedResult,
+            for: LookupCacheKey.make(
+                request: legacyRequest,
+                providerIdentifier: providerIdentifier
+            )
+        )
+        let engine = LookupEngine(
+            provider: provider,
+            providerIdentifier: providerIdentifier,
+            cache: cache
+        )
+
+        let outcome = try await engine.lookup(selection: selection)
+
+        XCTAssertTrue(outcome.wasCached)
+        XCTAssertEqual(outcome.request.text, "First sentence.")
+        XCTAssertEqual(
+            outcome.result,
+            .passage(.init(
+                alignmentBlocks: [.init(sourceSentenceIDs: [1], translation: "正文译文。")],
+                nuanceNote: nil,
+                literalGloss: nil
+            ))
+        )
+        let providerCallCount = await provider.callCount
+        XCTAssertEqual(providerCallCount, 0)
+
+        let canonicalKey = LookupCacheKey.make(
+            request: outcome.request,
+            providerIdentifier: providerIdentifier
+        )
+        let canonicalCachedResult = await cache.value(for: canonicalKey)
+        XCTAssertEqual(canonicalCachedResult, outcome.result)
+    }
+
+    func testEngineCleansProviderAttributionBeforeReturningAndCaching() async throws {
+        let directory = try temporaryDirectory()
+        let polluted = LookupResult.passage(PassageLookupResult(
+            translation: "正文译文。摘录来自 Example Book 此内容可能受版权保护。",
+            nuanceNote: nil,
+            literalGloss: nil
+        ))
+        let provider = CountingProvider(result: polluted)
+        let engine = LookupEngine(
+            provider: provider,
+            providerIdentifier: "mock:v1",
+            cache: LookupCache(fileURL: directory.appending(path: "cache.json"))
+        )
+
+        let first = try await engine.lookup(selection: "First sentence.")
+        let second = try await engine.lookup(selection: "First sentence.")
+
+        let expected = LookupResult.passage(PassageLookupResult(
+            translation: "正文译文。",
+            nuanceNote: nil,
+            literalGloss: nil
+        ))
+        XCTAssertEqual(first.result, expected)
+        XCTAssertEqual(second.result, expected)
+        XCTAssertFalse(first.wasCached)
+        XCTAssertTrue(second.wasCached)
+        let providerCallCount = await provider.callCount
+        XCTAssertEqual(providerCallCount, 1)
+    }
+
     func testCancellationAfterNoncooperativeProviderDoesNotPersistResult() async throws {
         let directory = try temporaryDirectory()
         let provider = ControlledProvider()

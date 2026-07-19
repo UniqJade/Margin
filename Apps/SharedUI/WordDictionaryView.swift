@@ -219,7 +219,9 @@ struct WordDictionaryView: View {
 
     @ViewBuilder
     private func alternativesView(_ alternatives: [String]) -> some View {
-        let values = alternatives.compactMap { nonempty($0) }
+        let values = alternatives.compactMap { value in
+            nonempty(ChineseTypographyNormalizer.normalize(value))
+        }
         if !values.isEmpty {
             HStack(alignment: .firstTextBaseline, spacing: 10) {
                 Text("Also")
@@ -244,7 +246,7 @@ struct WordDictionaryView: View {
             text = text + Text("\(english) ")
         }
         if let chinese = nonempty(sense.chineseDefinition) {
-            text = text + Text(chinese).fontWeight(.semibold)
+            text = text + Text(ChineseTypographyNormalizer.normalize(chinese)).fontWeight(.semibold)
         }
         return text
     }
@@ -252,7 +254,7 @@ struct WordDictionaryView: View {
     @ViewBuilder
     private func exampleView(_ example: WordExample) -> some View {
         let english = nonempty(example.english)
-        let chinese = nonempty(example.chinese)
+        let chinese = nonempty(example.chinese).map(ChineseTypographyNormalizer.normalize)
 
         if english != nil || chinese != nil {
             HStack(alignment: .top, spacing: 8) {
@@ -285,7 +287,9 @@ struct WordDictionaryView: View {
     private func chineseDefinitions(in word: WordLookupResult) -> String {
         word.partsOfSpeech
             .flatMap(\.senses)
-            .compactMap { nonempty($0.chineseDefinition) }
+            .compactMap {
+                nonempty($0.chineseDefinition).map(ChineseTypographyNormalizer.normalize)
+            }
             .joined(separator: "；")
     }
 

@@ -57,6 +57,49 @@ final class LookupModelsTests: XCTestCase {
         XCTAssertEqual(request.style, .naturalPublishedProse)
     }
 
+    func testRequestFactoryRemovesChineseAppleBooksAttributionFooter() throws {
+        let request = try LookupRequest(selection: """
+        On 31 May 1940, Churchill flew to Paris.
+
+        摘录来自
+        Churchill
+        Winston Churchill
+        此内容可能受版权保护。
+        """)
+
+        XCTAssertEqual(request.text, "On 31 May 1940, Churchill flew to Paris.")
+        XCTAssertEqual(request.kind, .passage)
+    }
+
+    func testRequestFactoryRemovesEnglishAppleBooksAttributionFooter() throws {
+        let request = try LookupRequest(selection: """
+        That started an exchange.
+
+        Excerpt From
+        Example Book
+        Example Author
+        This material may be protected by copyright.
+        """)
+
+        XCTAssertEqual(request.text, "That started an exchange.")
+    }
+
+    func testRequestFactoryPreservesIncompleteAttributionLikeText() throws {
+        let selection = "The essay discusses the phrase Excerpt From without a copyright notice."
+
+        XCTAssertEqual(try LookupRequest(selection: selection).text, selection)
+    }
+
+    func testAttributionCleanerRequiresSourceMetadataAndIsIdempotent() {
+        let incomplete = "正文。摘录来自 此内容可能受版权保护。"
+        XCTAssertEqual(AppleBooksAttributionCleaner.removingFooter(from: incomplete), incomplete)
+
+        let polluted = "正文。摘录来自 Example Book 此内容可能受版权保护。"
+        let cleaned = AppleBooksAttributionCleaner.removingFooter(from: polluted)
+        XCTAssertEqual(cleaned, "正文。")
+        XCTAssertEqual(AppleBooksAttributionCleaner.removingFooter(from: cleaned), cleaned)
+    }
+
     func testRichWordResultRoundTripsThroughJSON() throws {
         let result = LookupResult.word(richWord)
 
