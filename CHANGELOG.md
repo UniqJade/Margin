@@ -27,9 +27,9 @@ releases. Margin does not currently distribute public application binaries.
 - Provider-returned Chinese uses a conservative local typography pass for
   Chinese quotation marks, full-width punctuation, and stray CJK spacing in
   displayed, copied, spoken, and saved-summary text.
-- Chinese passage text uses the system's proportional CJK spacing feature on
-  macOS, preventing full-width commas and mixed Chinese/number font runs from
-  looking like inserted spaces while preserving the underlying translation.
+- Chinese passage text keeps its Songti reading face on macOS while applying
+  local spacing only after Chinese commas, preventing them from looking like
+  inserted spaces without changing the punctuation character itself.
 - Passage panels use the existing page icon beside a clearer Margin wordmark.
 
 ### Compatibility

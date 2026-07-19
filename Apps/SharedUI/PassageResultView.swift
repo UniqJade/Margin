@@ -285,9 +285,9 @@ private struct PassageResultContent: View {
                 .padding(.leading, 30)
 
             alignmentLanguageRow(marker: "中") {
-                Text(block.translation)
-                    .chinesePassageTypography()
+                ChineseReadingTypography.passageText(block.translation)
                     .lineSpacing(5)
+                    .multilineTextAlignment(.leading)
                     .textSelection(.enabled)
             }
         }
@@ -367,9 +367,9 @@ private struct PassageResultContent: View {
     private func naturalTranslation(_ passage: PassageLookupResult) -> some View {
         let translation = ChineseTypographyNormalizer.normalize(passage.translation)
         return VStack(alignment: .leading, spacing: 14) {
-            Text(translation)
-                .chinesePassageTypography()
+            ChineseReadingTypography.passageText(translation)
                 .lineSpacing(5)
+                .multilineTextAlignment(.leading)
                 .textSelection(.enabled)
                 .accessibilityLabel("Natural translation: \(translation)")
 

@@ -4,7 +4,6 @@ import XCTest
 
 #if os(macOS)
 import AppKit
-import CoreText
 #endif
 
 final class ChineseTypographyNormalizerTests: XCTestCase {
@@ -98,16 +97,11 @@ final class ChineseTypographyNormalizerTests: XCTestCase {
 
     #if os(macOS)
     @MainActor
-    func testChineseReadingFontUsesProportionalCJKSpacing() {
-        let settings = ChineseReadingTypography.macFont.fontDescriptor
-            .fontAttributes[.featureSettings] as? [[NSFontDescriptor.FeatureKey: Int]]
-
-        XCTAssertTrue(
-            settings?.contains {
-                $0[.typeIdentifier] == kTextSpacingType
-                    && $0[.selectorIdentifier] == kProportionalTextSelector
-            } == true
-        )
+    func testChineseReadingTypographyPreservesSongtiAndCompressesOnlyCommaSpacing() {
+        XCTAssertTrue(ChineseReadingTypography.macFont.familyName?.contains("Songti") == true)
+        XCTAssertLessThan(ChineseReadingTypography.kerning(for: "，"), 0)
+        XCTAssertEqual(ChineseReadingTypography.kerning(for: "。"), 0)
+        XCTAssertEqual(ChineseReadingTypography.kerning(for: "“"), 0)
     }
     #endif
 }
