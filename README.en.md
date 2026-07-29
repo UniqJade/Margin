@@ -20,7 +20,7 @@ something up while reading almost disappear.
 
 ## See it
 
-![Select text in Apple Books, press Control–Option–M, and read the translation beside the page — then switch between Natural Translation and Bilingual View](docs/images/margin-books-demo-v012.gif)
+![Select text in Apple Books, press Control–Option–M, and read the translation beside the page — then switch between Natural Translation and Bilingual View](docs/images/margin-books-demo.gif)
 
 *The passage is self-authored demonstration text; the Apple Books selection and
 Margin's panel are captured from the real apps.*
