@@ -1,112 +1,94 @@
-# Margin — Contextual reading for Apple Books on Mac
+# Margin｜Mac 上的 Apple Books 语境阅读
 
-> **Read English. Stay in the book.**
+> **Read English. Stay in the book.｜读英文，不离开书页。**
 
 [![Public source validation](https://github.com/UniqJade/Margin/actions/workflows/ci.yml/badge.svg)](https://github.com/UniqJade/Margin/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/UniqJade/Margin?display_name=tag)](https://github.com/UniqJade/Margin/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![macOS: verified](https://img.shields.io/badge/macOS-verified-d97757)
 
-[简体中文](README.zh-CN.md)
+[English](README.en.md)
 
-Margin turns a hard English sentence into natural Simplified Chinese **without
-pulling you out of Apple Books**. Select a word or a short passage, press one
-shortcut, and the translation opens in a small panel beside the page. Dismiss it,
-and you are back in the book — no app-switching, no lost place.
+Margin 把一句读不懂的英文，**在不离开 Apple Books 的前提下**变成自然的简体中文。
+选中一个词或一小段，按一次快捷键，译文就在书页旁的小浮层里打开；关掉它，你立刻
+回到书里——不切换应用，也不丢失阅读位置。
 
-It does one thing and tries to do it well. Margin is not a dictionary, an OCR
-tool, or a document translator. It just makes the small interruption of looking
-something up while reading almost disappear.
+它只做一件事，并尽力做好。Margin 不是词典、不是 OCR、也不是文档翻译器，它只想让
+"读英文时查一下"这一次小小的打断，几乎消失。
 
-## See it
+## 看看效果
 
-![Select text in Apple Books, press Control–Option–M, and read the translation beside the page — then switch between Natural Translation and Bilingual View](docs/images/margin-books-demo-v012.gif)
+![在 Apple Books 中选中文字，按 Control–Option–M，在书页旁读译文，并可在自然译文与双语对照之间切换](docs/images/margin-books-demo-v012.gif)
 
-*The passage is self-authored demonstration text; the Apple Books selection and
-Margin's panel are captured from the real apps.*
+*段落为自写演示文本；Apple Books 选区与 Margin 浮层均截取自真实应用。*
 
-## How you use it
+## 怎么用
 
-1. In Apple Books, **select** a word — or a sentence or two.
-2. Press **⌃⌥M** (Control–Option–M).
-3. Read the result in the panel beside the page. Press again on anything else, or
-   dismiss it to keep reading.
+1. 在 Apple Books 里**选中**一个词，或一两句话。
+2. 按 **⌃⌥M**（Control–Option–M）。
+3. 在书页旁的浮层里读结果。换别的内容再按一次，或关掉继续读。
 
-**Passages** open as a **Natural Translation** — the complete Chinese first, with
-the English original tucked into a fold you open only when you want it. When a
-passage splits into two or more aligned sentences, switch to **Bilingual View**
-for numbered English–Chinese blocks. Both views are the *same* translation, so
-the wording never contradicts itself.
+**段落**默认以**自然译文**打开——先给完整中文，英文原文收在一个折叠里，需要时再
+展开。当一段能拆成两句或更多对齐句子时，可切到**双语对照**，读带编号的英—中对照
+块。两种视图是*同一份*译文，措辞不会自相矛盾。
 
-**Words** come back as a compact card: pronunciation, senses grouped by part of
-speech, and a couple of bilingual examples — enough to keep reading, not a whole
-dictionary.
+**单词**返回一张紧凑卡片：发音、按词性归类的释义、几个双语例句——够你接着读，而
+不是一部完整词典。
 
-The panel stays out of the way: a small window that follows Light / Dark /
-System, with Copy, Speak, Save, and Retry always one click away.
+浮层始终不碍事：小窗口，跟随浅色 / 深色 / 系统，复制、朗读、收藏、重试都一键
+可达。
 
-## Why it's good at this
+## 它为什么擅长这件事
 
-- **Written for prose, not word-by-word.** The translation prompt aims for
-  natural, published-quality Chinese, tuned for the two-to-four-sentence
-  selections you actually hit in novels, biography, and nonfiction.
-- **A note only when it matters.** A short nuance note appears only when ambiguity
-  would change the meaning, tone, or who is being referred to — not on every
-  lookup.
-- **It sends only what you selected.** Never the book title, author, page, or the
-  text around your selection.
+- **为书面语设计，而非逐词直译。** 翻译提示词追求自然、可出版质量的中文，专门针对
+  你在小说、传记、非虚构里真正会遇到的 2–4 句选区。
+- **只在需要时加一句说明。** 只有当歧义会改变含义、语气或指代对象时，才附一句简短
+  提示——不是每次都给。
+- **只发送你选中的文字。** 绝不发送书名、作者、页码或选区周围的内容。
 
-Apple Look Up, Youdao, and Eudic have deeper dictionaries, OCR, and offline data.
-Margin's one edge is a quieter Apple Books flow with prose-focused Chinese. Its
-AI-generated content is not an authoritative dictionary — it can be wrong.
+Apple"查询"、有道、欧路有更深的词库、OCR 和离线数据。Margin 唯一的优势，是一条
+更安静的 Apple Books 流程和专注书面中文的翻译。它由 AI 生成的内容不是权威词典，
+可能出错。
 
-## How good is the translation?
+## 翻译到底好不好
 
-Margin ships a local, offline blind A/B evaluator. The locked v0.1.0 run compared
-DeepSeek against Apple's translation on 40 passages, with the book and category
-mix fixed *before* any translation was collected:
+Margin 内置一个本地、离线的 A/B 盲测工具。锁定的 v0.1.0 评测在**采集任何译文之前**
+就固定了 40 段文本的书目与类别，再对比 DeepSeek 与 Apple：
 
-| Measure | Result | Gate |
+| 指标 | 结果 | 门槛 |
 |---|---:|---:|
-| Preferred for naturalness | **37 / 40** | ≥ 24 |
-| As accurate as Apple or better | **37 / 40** | ≥ 36 |
-| Major semantic errors | **0** | ≤ 1 |
+| 自然度更受偏好 | **37 / 40** | ≥ 24 |
+| 准确度不低于 Apple | **37 / 40** | ≥ 36 |
+| 重大语义错误 | **0** | ≤ 1 |
 
-A single-evaluator, author-run test — honest for these 40 passages, not a claim
-that Margin beats Apple for every book or reader. Method and limits:
-[docs/evaluation.md](docs/evaluation.md).
+这是一次单评测者、作者自测——对这 40 段诚实可辩护，但不代表 Margin 对每本书、每位
+读者都胜过 Apple。方法与局限见 [docs/evaluation.md](docs/evaluation.md)。
 
-## Your data stays yours
+## 你的数据仍归你
 
-Margin is data-minimizing by design. A request carries only your selected text
-and its language — never the book, author, or page. Your API key lives in a
-device-only Keychain item; results sit in a small local cache you can clear at any
-time; nothing enters **Saved** unless you press Save. Selected text still goes to
-the provider you configure, so Margin is private-by-design, not offline. See
-[SECURITY.md](SECURITY.md).
+Margin 以数据最小化为设计：请求只包含你选中的文字和它的语言——绝不含书名、作者或
+页码。API Key 存在仅限本机的钥匙串项里；结果放在可随时清除的小型本地缓存中；不按
+收藏就不会进入**已收藏**。选中文字仍会发送给你配置的服务商，所以 Margin 是隐私
+优先，而非离线。详见 [SECURITY.md](SECURITY.md)。
 
-## Run it on your Mac
+## 在你的 Mac 上运行
 
-Margin is **source-only, bring-your-own-key**: you build and sign your own copy in
-Xcode and use your own DeepSeek API key — there is no download. Once set up, one
-command installs it:
+Margin **只发布源码、自带 Key**：你在 Xcode 里自行构建并签名，用自己的 DeepSeek
+API Key，没有现成下载。配置好后，一条命令即可安装：
 
 ```
 ./scripts/install-mac.sh
 ```
 
-Full prerequisites, signing, and first-run setup are in
-**[Building Margin](docs/building.md)**. Verified on macOS 26.5 with Apple Books
-8.5; the first time you press ⌃⌥M, allow Margin under **Privacy & Security →
-Accessibility**, then press again.
+完整环境要求、签名与首次设置见 **[构建 Margin](docs/building.md)**。已在 macOS
+26.5 + Apple Books 8.5 验证；首次按 ⌃⌥M 时，在**隐私与安全性 → 辅助功能**里允许
+Margin，再按一次。
 
-## Scope
+## 范围
 
-macOS only, English → Simplified Chinese only, cloud provider required. A personal
-source build — no public binary, account sync, OCR, or document translation. AI
-output can mistranslate or miss nuance, and word entries do not cite a licensed
-dictionary.
+仅 macOS，仅英语 → 简体中文，依赖云端服务商。个人源码构建——没有公共二进制、账户
+同步、OCR 或文档翻译。AI 输出可能误译或遗漏语气；单词结果不引用获授权的权威词典。
 
-## License
+## 许可证
 
-[MIT](LICENSE). Evaluation corpora keep their own provenance and licensing notes.
+[MIT](LICENSE)。评测语料保留各自的来源与许可说明。
