@@ -53,8 +53,9 @@ System, with Copy, Speak, Save, and Retry always one click away.
 - **A note only when it matters.** A short nuance note appears only when ambiguity
   would change the meaning, tone, or who is being referred to — not on every
   lookup.
-- **It sends only what you selected.** Never the book title, author, page, or the
-  text around your selection.
+- **It sends only what is needed.** Apple Books may append source metadata such
+  as a title and author to the selection; Margin removes that footer locally
+  and does not separately collect the page number or surrounding text.
 
 Apple Look Up, Youdao, and Eudic have deeper dictionaries, OCR, and offline data.
 Margin's one edge is a quieter Apple Books flow with prose-focused Chinese. Its
@@ -78,12 +79,15 @@ that Margin beats Apple for every book or reader. Method and limits:
 
 ## Your data stays yours
 
-Margin is data-minimizing by design. A request carries only your selected text
-and its language — never the book, author, or page. Your API key lives in a
-device-only Keychain item; results sit in a small local cache you can clear at any
-time; nothing enters **Saved** unless you press Save. Selected text still goes to
-the provider you configure, so Margin is private-by-design, not offline. See
-[SECURITY.md](SECURITY.md).
+Margin is data-minimizing by design. The only book content sent to the provider
+is the selection after local cleaning and normalization; the request also
+contains the fixed instructions and control fields needed for translation.
+Margin removes any recognized Apple Books attribution footer, which may include
+the title and author, and does not separately collect the page number or
+surrounding text. Your API key lives in a device-only Keychain item; results sit
+in a small local cache you can clear at any time; nothing enters **Saved** unless
+you press Save. Selected text still goes to the provider you configure, so
+Margin is private-by-design, not offline. See [SECURITY.md](SECURITY.md).
 
 ## Run it on your Mac
 
@@ -106,6 +110,9 @@ macOS only, English → Simplified Chinese only, cloud provider required. A pers
 source build — no public binary, account sync, OCR, or document translation. AI
 output can mistranslate or miss nuance, and word entries do not cite a licensed
 dictionary.
+
+Developers can find module boundaries, lookup flows, and data invariants in the
+[architecture guide](docs/architecture.en.md).
 
 ## License
 
