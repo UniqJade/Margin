@@ -20,6 +20,28 @@ assert_missing() {
     [[ ! -e "$1" ]] || fail "expected path to be removed: $1"
 }
 
+ci_workflow="$repository_root/.github/workflows/ci.yml"
+xcodegen_installer="$repository_root/scripts/install-xcodegen.sh"
+xcodegen_generator="$repository_root/scripts/generate-project.sh"
+
+assert_exists "$ci_workflow"
+assert_exists "$xcodegen_installer"
+/usr/bin/grep -Fq 'branches: [main]' "$ci_workflow" \
+    || fail "CI must run branch pushes only on main so PR commits are not validated twice"
+if /usr/bin/grep -Fq 'brew install xcodegen' "$ci_workflow"; then
+    fail "CI must not install an unpinned XcodeGen release"
+fi
+/usr/bin/grep -Fq './scripts/install-xcodegen.sh' "$ci_workflow" \
+    || fail "CI must install the repository-pinned XcodeGen release"
+/usr/bin/grep -Fq 'xcodegen_version=2.45.4' "$xcodegen_installer" \
+    || fail "the XcodeGen installer must pin version 2.45.4"
+/usr/bin/grep -Fq \
+    'xcodegen_sha256=090ec29491aad50aec10631bf6e62253fed733c50f3aab0f5ffc86bc170bdbef' \
+    "$xcodegen_installer" \
+    || fail "the pinned XcodeGen archive must have its official SHA-256"
+/usr/bin/grep -Fq 'expected_xcodegen_version=2.45.4' "$xcodegen_generator" \
+    || fail "project generation must reject XcodeGen version drift"
+
 clean_fixture="$temporary_root/clean-fixture"
 /bin/mkdir -p "$clean_fixture/scripts"
 /bin/cp "$repository_root/scripts/clean-local-builds.sh" "$clean_fixture/scripts/clean-local-builds.sh"

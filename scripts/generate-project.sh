@@ -4,6 +4,8 @@ set -eu
 
 script_dir=${0:A:h}
 repository_root=${script_dir:h}
+expected_xcodegen_version=2.45.4
+pinned_xcodegen="$repository_root/.build/tooling/xcodegen-$expected_xcodegen_version/bin/xcodegen"
 temporary_root=$(/usr/bin/mktemp -d "${TMPDIR:-/tmp}/margin-project-generation.XXXXXX")
 stable_root="$temporary_root/Margin"
 generated_project="$stable_root/BooksTranslator.xcodeproj"
@@ -14,8 +16,20 @@ cleanup() {
 }
 trap cleanup EXIT
 
-if ! command -v xcodegen >/dev/null 2>&1; then
-    print -u2 "Margin project generation stopped: xcodegen is not installed."
+if [[ -x "$pinned_xcodegen" ]]; then
+    xcodegen_command=$pinned_xcodegen
+elif command -v xcodegen >/dev/null 2>&1; then
+    xcodegen_command=$(command -v xcodegen)
+else
+    print -u2 "Margin project generation stopped: XcodeGen is not installed."
+    print -u2 "Run ./scripts/install-xcodegen.sh to install the pinned release."
+    exit 2
+fi
+
+xcodegen_version=$("$xcodegen_command" --version)
+if [[ "$xcodegen_version" != "Version: $expected_xcodegen_version" ]]; then
+    print -u2 "Margin project generation stopped: expected XcodeGen $expected_xcodegen_version, got $xcodegen_version."
+    print -u2 "Run ./scripts/install-xcodegen.sh to install the pinned release."
     exit 2
 fi
 
@@ -26,7 +40,7 @@ done
 
 (
     cd "$stable_root"
-    xcodegen generate
+    "$xcodegen_command" generate
 )
 
 if [[ ! -f "$generated_project/project.pbxproj" ]]; then
