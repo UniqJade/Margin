@@ -2,6 +2,7 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -22,8 +23,10 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v7
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Install pinned XcodeGen
+        run: |
+          xcodegen_path="$(./scripts/install-xcodegen.sh)"
+          /usr/bin/dirname "$xcodegen_path" >> "$GITHUB_PATH"
 
       - name: Record toolchain
         run: |

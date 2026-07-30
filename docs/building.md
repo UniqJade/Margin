@@ -10,7 +10,8 @@ boundary described in `SECURITY.md`.
 
 - Xcode 26.6 or newer
 - macOS 26 for the documented development environment
-- XcodeGen 2.45 or newer (`brew install xcodegen`)
+- XcodeGen 2.45.4, installed from the checksum-verified official release by
+  `./scripts/install-xcodegen.sh`
 - Git and the command-line tools selected through the full Xcode installation
 - a personal DeepSeek API key for live lookup
 
@@ -47,6 +48,7 @@ Forks must use their own values.
 From the repository root:
 
 ```bash
+./scripts/install-xcodegen.sh
 ./scripts/generate-project.sh
 swift test
 ./scripts/test-mac.sh
@@ -230,7 +232,8 @@ Margin v0.1.0 只提供个人源码构建，不生成公共分发二进制，也
 
 - Xcode 26.6 或更新版本
 - 文档所记录的开发环境为 macOS 26
-- XcodeGen 2.45 或更新版本（`brew install xcodegen`）
+- XcodeGen 2.45.4；运行 `./scripts/install-xcodegen.sh`，从官方发布包安装并校验
+  SHA-256
 - 通过完整 Xcode 选择的 Git 与命令行工具
 - 用于真实查询的个人 DeepSeek API Key
 
@@ -258,6 +261,7 @@ git check-ignore -v Local.xcconfig
 ### 2. 生成工程并测试
 
 ```bash
+./scripts/install-xcodegen.sh
 ./scripts/generate-project.sh
 swift test
 ./scripts/test-mac.sh
