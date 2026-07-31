@@ -141,6 +141,10 @@ final class LookupSessionTests: XCTestCase {
             completedBlocks: [],
             inProgress: InProgressBlock(sourceSentenceIDs: [1], text: "流")
         )
+        let late = PassagePartial(
+            completedBlocks: [],
+            inProgress: InProgressBlock(sourceSentenceIDs: [1], text: "迟到")
+        )
 
         session.lookup(selection: "A complete sentence.")
         try await harness.waitUntilSubscribed()
@@ -150,6 +154,7 @@ final class LookupSessionTests: XCTestCase {
         session.cancel()
         XCTAssertEqual(session.phase, .idle)
 
+        harness.yield(.partial(late))
         harness.yield(.fallback)
         harness.finish()
         await Task.yield()

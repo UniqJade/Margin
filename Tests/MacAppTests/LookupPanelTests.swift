@@ -271,13 +271,15 @@ final class LookupPanelTests: XCTestCase {
         partial: PassagePartial
     ) async throws -> CGFloat {
         var reportedHeights: [CGFloat] = []
-        let host = NSHostingView(rootView: PassageStreamingView(
+        let rootView = PassageStreamingView(
             originalText: originalText,
             partial: partial,
             onCancel: {},
             onDismiss: nil,
             onPreferredHeightChange: { reportedHeights.append($0) }
-        ))
+        )
+        .environment(\._accessibilityReduceMotion, false)
+        let host = NSHostingView(rootView: rootView)
         host.frame = NSRect(
             x: 0,
             y: 0,
