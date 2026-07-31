@@ -106,6 +106,26 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
         XCTAssertTrue(switchable.showsModePicker)
     }
 
+    func testInitialReadingModeFollowsWhetherLookupStreamed() {
+        XCTAssertEqual(
+            PassageReadingMode.initial(didStream: false),
+            .naturalTranslation
+        )
+        XCTAssertEqual(
+            PassageReadingMode.initial(didStream: true),
+            .bilingualView
+        )
+    }
+
+    func testNaturalOnlyAvailabilityOverridesStreamedBilingualInitialMode() {
+        XCTAssertEqual(
+            PassageReadingAvailability.naturalOnly.effectiveMode(
+                for: .initial(didStream: true)
+            ),
+            .naturalTranslation
+        )
+    }
+
     func testUnavailableAndSingleBlockAvailabilityClampToNaturalTranslation() {
         XCTAssertEqual(
             PassageReadingAvailability(alignmentBlockCount: 0)
@@ -177,6 +197,13 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
             ["First sentence.", "Second sentence. Third sentence."]
         )
         XCTAssertEqual(blocks.map(\.translation), ["第一句。", "第二、三句。"])
+        XCTAssertEqual(
+            blocks,
+            PassageAlignmentPresentation.blocks(
+                originalText: original,
+                alignmentBlocks: passage.alignmentBlocks
+            )
+        )
     }
 
     private func makePassageIdentity(

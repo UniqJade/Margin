@@ -12,6 +12,7 @@ struct LookupActionBar: View {
     let isSaved: Bool
     let onToggleSaved: () -> Void
     let onRetry: () -> Void
+    var isEnabled = true
 
     var body: some View {
         VStack(spacing: 16) {
@@ -31,6 +32,7 @@ struct LookupActionBar: View {
                 actionButton("Retry", systemImage: "arrow.clockwise", action: onRetry)
             }
             .labelStyle(.iconOnly)
+            .disabled(!isEnabled)
         }
     }
 

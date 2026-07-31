@@ -9,6 +9,193 @@ import XCTest
 
 @MainActor
 final class LookupSessionTests: XCTestCase {
+    func testStreamingLookupPublishesGrowingPartialThenFinalResult() async throws {
+        let first = PassagePartial(
+            completedBlocks: [],
+            inProgress: InProgressBlock(sourceSentenceIDs: [1], text: "第")
+        )
+        let second = PassagePartial(
+            completedBlocks: [],
+            inProgress: InProgressBlock(sourceSentenceIDs: [1], text: "第一句")
+        )
+        let outcome = try await makeOutcome(selection: "A complete sentence.")
+        let session = makeIsolatedSession(
+            lookupStreamOperation: { _ in
+                AsyncThrowingStream { continuation in
+                    continuation.yield(.partial(first))
+                    continuation.yield(.partial(second))
+                    continuation.yield(.completed(outcome))
+                    continuation.finish()
+                }
+            }
+        )
+        var phases: [LookupSession.Phase] = []
+        let cancellable = session.$phase.dropFirst().sink {
+            phases.append($0)
+        }
+
+        session.lookup(selection: "A complete sentence.")
+        try await waitUntil { session.phase == .result(outcome) }
+
+        XCTAssertEqual(
+            phases,
+            [.loading, .streaming(first), .streaming(second), .result(outcome)]
+        )
+        XCTAssertTrue(session.didStreamCurrentLookup)
+        withExtendedLifetime(cancellable) {}
+    }
+
+    func testStreamingFallbackDiscardsPreviewAndReturnsToLoading() async throws {
+        let partial = PassagePartial(
+            completedBlocks: [],
+            inProgress: InProgressBlock(sourceSentenceIDs: [1], text: "旧预览")
+        )
+        let outcome = try await makeOutcome(selection: "A complete sentence.")
+        let session = makeIsolatedSession(
+            lookupStreamOperation: { _ in
+                AsyncThrowingStream { continuation in
+                    continuation.yield(.partial(partial))
+                    continuation.yield(.fallback)
+                    continuation.yield(.completed(outcome))
+                    continuation.finish()
+                }
+            }
+        )
+        var phases: [LookupSession.Phase] = []
+        var streamingFlags: [Bool] = []
+        let cancellable = session.$phase.dropFirst().sink {
+            phases.append($0)
+            streamingFlags.append(session.didStreamCurrentLookup)
+        }
+
+        session.lookup(selection: "A complete sentence.")
+        try await waitUntil { session.phase == .result(outcome) }
+
+        XCTAssertEqual(
+            phases,
+            [.loading, .streaming(partial), .loading, .result(outcome)]
+        )
+        XCTAssertEqual(streamingFlags, [false, true, false, false])
+        XCTAssertFalse(session.didStreamCurrentLookup)
+        withExtendedLifetime(cancellable) {}
+    }
+
+    func testCacheHitWithoutPartialDoesNotCountAsStreaming() async throws {
+        let outcome = try await makeCachedOutcome(selection: "A complete sentence.")
+        let session = makeIsolatedSession(
+            lookupStreamOperation: { _ in
+                AsyncThrowingStream { continuation in
+                    continuation.yield(.completed(outcome))
+                    continuation.finish()
+                }
+            }
+        )
+
+        session.lookup(selection: "A complete sentence.")
+        try await waitUntil { session.phase == .result(outcome) }
+
+        XCTAssertTrue(outcome.wasCached)
+        XCTAssertFalse(session.didStreamCurrentLookup)
+    }
+
+    func testBlockingLookupDoesNotCountAsStreaming() async throws {
+        let outcome = try await makeOutcome(selection: "A complete sentence.")
+        let session = makeIsolatedSession(lookupOperation: { _ in outcome })
+
+        session.lookup(selection: "A complete sentence.")
+        try await waitUntil { session.phase == .result(outcome) }
+
+        XCTAssertFalse(session.didStreamCurrentLookup)
+    }
+
+    func testNewLookupResetsStreamingFlagBeforeItsFirstEvent() async throws {
+        let harness = LookupSessionStreamHarness()
+        let session = makeIsolatedSession(
+            lookupStreamOperation: { _ in harness.makeStream() }
+        )
+        let partial = PassagePartial(
+            completedBlocks: [],
+            inProgress: InProgressBlock(sourceSentenceIDs: [1], text: "流")
+        )
+
+        session.lookup(selection: "First sentence.")
+        try await harness.waitUntilSubscribed()
+        harness.yield(.partial(partial))
+        try await waitUntil { session.phase == .streaming(partial) }
+        XCTAssertTrue(session.didStreamCurrentLookup)
+
+        session.lookup(selection: "Second sentence.")
+
+        XCTAssertEqual(session.phase, .loading)
+        XCTAssertFalse(session.didStreamCurrentLookup)
+        session.cancel()
+        harness.finish()
+    }
+
+    func testCancellingStreamingSessionIgnoresLaterEvents() async throws {
+        let harness = LookupSessionStreamHarness()
+        let session = makeIsolatedSession(
+            lookupStreamOperation: { _ in harness.makeStream() }
+        )
+        let first = PassagePartial(
+            completedBlocks: [],
+            inProgress: InProgressBlock(sourceSentenceIDs: [1], text: "流")
+        )
+
+        session.lookup(selection: "A complete sentence.")
+        try await harness.waitUntilSubscribed()
+        harness.yield(.partial(first))
+        try await waitUntil { session.phase == .streaming(first) }
+        XCTAssertTrue(session.didStreamCurrentLookup)
+        session.cancel()
+        XCTAssertEqual(session.phase, .idle)
+
+        harness.yield(.fallback)
+        harness.finish()
+        await Task.yield()
+
+        XCTAssertEqual(session.phase, .idle)
+        XCTAssertTrue(session.didStreamCurrentLookup)
+    }
+
+    func testRetryResubscribesToStreamingLookup() async throws {
+        let outcome = try await makeOutcome(selection: "A complete sentence.")
+        let partial = PassagePartial(
+            completedBlocks: [],
+            inProgress: InProgressBlock(sourceSentenceIDs: [1], text: "旧预览")
+        )
+        var subscriptionCount = 0
+        let session = makeIsolatedSession(
+            lookupStreamOperation: { _ in
+                subscriptionCount += 1
+                let attempt = subscriptionCount
+                return AsyncThrowingStream { continuation in
+                    if attempt == 1 {
+                        continuation.yield(.partial(partial))
+                        continuation.finish(throwing: TestFailure.oldRequest)
+                    } else {
+                        continuation.yield(.completed(outcome))
+                        continuation.finish()
+                    }
+                }
+            }
+        )
+
+        session.lookup(selection: "A complete sentence.")
+        try await waitUntil {
+            if case .failure = session.phase { return true }
+            return false
+        }
+        XCTAssertTrue(session.didStreamCurrentLookup)
+
+        session.retry()
+        XCTAssertFalse(session.didStreamCurrentLookup)
+        try await waitUntil { session.phase == .result(outcome) }
+
+        XCTAssertEqual(subscriptionCount, 2)
+        XCTAssertFalse(session.didStreamCurrentLookup)
+    }
+
     func testAppearancePreferredColorSchemeMapping() {
         XCTAssertNil(MarginAppearance.system.preferredColorScheme)
         XCTAssertEqual(MarginAppearance.light.preferredColorScheme, .light)
@@ -349,6 +536,49 @@ final class LookupSessionTests: XCTestCase {
         return try await engine.lookup(selection: selection)
     }
 
+    private func makeCachedOutcome(selection: String) async throws -> LookupOutcome {
+        let directory = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        let engine = LookupEngine(
+            provider: FixtureProvider(),
+            providerIdentifier: "fixture",
+            cache: LookupCache(fileURL: directory.appending(path: "cache.json")),
+            history: LookupHistoryStore(fileURL: directory.appending(path: "history.json"))
+        )
+        _ = try await engine.lookup(selection: selection)
+        return try await engine.lookup(selection: selection)
+    }
+
+}
+
+@MainActor
+private final class LookupSessionStreamHarness {
+    private var continuation:
+        AsyncThrowingStream<LookupStreamEvent, Error>.Continuation?
+
+    func makeStream() -> AsyncThrowingStream<LookupStreamEvent, Error> {
+        let pair = AsyncThrowingStream<LookupStreamEvent, Error>.makeStream()
+        continuation = pair.continuation
+        return pair.stream
+    }
+
+    func waitUntilSubscribed() async throws {
+        let clock = ContinuousClock()
+        let deadline = clock.now.advanced(by: .seconds(2))
+        while continuation == nil {
+            guard clock.now < deadline else {
+                throw TestTimeout.deadlineExceeded
+            }
+            await Task.yield()
+        }
+    }
+
+    func yield(_ event: LookupStreamEvent) {
+        continuation?.yield(event)
+    }
+
+    func finish() {
+        continuation?.finish()
+    }
 }
 
 private struct AlwaysResponseFailureProvider: TranslationProvider {

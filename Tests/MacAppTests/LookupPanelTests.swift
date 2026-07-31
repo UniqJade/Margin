@@ -1,4 +1,6 @@
 import AppKit
+import LookupCore
+import SwiftUI
 import XCTest
 @testable import Margin
 
@@ -234,6 +236,71 @@ final class LookupPanelTests: XCTestCase {
             NSSize(width: LookupPanelSizing.preferredWidth, height: LookupPanelSizing.minimumContentHeight)
         )
     }
+
+    func testStreamingCaretDoesNotChangeReportedHeight() async throws {
+        let originalText = "First sentence. Second sentence."
+        let translation = "这是同一段用于测量的中文译文。"
+        let completedHeight = try await reportedStreamingHeight(
+            originalText: originalText,
+            partial: PassagePartial(
+                completedBlocks: [
+                    PassageAlignmentBlock(
+                        sourceSentenceIDs: [1, 2],
+                        translation: translation
+                    )
+                ],
+                inProgress: nil
+            )
+        )
+        let inProgressHeight = try await reportedStreamingHeight(
+            originalText: originalText,
+            partial: PassagePartial(
+                completedBlocks: [],
+                inProgress: InProgressBlock(
+                    sourceSentenceIDs: [1, 2],
+                    text: translation
+                )
+            )
+        )
+
+        XCTAssertEqual(inProgressHeight, completedHeight, accuracy: 0.5)
+    }
+
+    private func reportedStreamingHeight(
+        originalText: String,
+        partial: PassagePartial
+    ) async throws -> CGFloat {
+        var reportedHeights: [CGFloat] = []
+        let host = NSHostingView(rootView: PassageStreamingView(
+            originalText: originalText,
+            partial: partial,
+            onCancel: {},
+            onDismiss: nil,
+            onPreferredHeightChange: { reportedHeights.append($0) }
+        ))
+        host.frame = NSRect(
+            x: 0,
+            y: 0,
+            width: LookupPanelSizing.preferredWidth,
+            height: LookupPanelSizing.maximumContentHeight
+        )
+        host.layoutSubtreeIfNeeded()
+
+        let clock = ContinuousClock()
+        let deadline = clock.now.advanced(by: .seconds(2))
+        while reportedHeights.isEmpty {
+            guard clock.now < deadline else {
+                throw LookupPanelViewTestTimeout.deadlineExceeded
+            }
+            await Task.yield()
+        }
+        try await Task.sleep(for: .milliseconds(50))
+        return try XCTUnwrap(reportedHeights.last)
+    }
+}
+
+private enum LookupPanelViewTestTimeout: Error {
+    case deadlineExceeded
 }
 
 private extension NSRect {

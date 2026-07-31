@@ -3,6 +3,34 @@ import Foundation
 public protocol TranslationProvider: Sendable {
     var displayName: String { get }
     func translate(_ request: LookupRequest) async throws -> LookupResult
+    func supportsStreaming(for request: LookupRequest) -> Bool
+    func translateStreaming(
+        _ request: LookupRequest
+    ) -> AsyncThrowingStream<PassageStreamChunk, Error>
+}
+
+public extension TranslationProvider {
+    func supportsStreaming(for request: LookupRequest) -> Bool {
+        false
+    }
+
+    func translateStreaming(
+        _ request: LookupRequest
+    ) -> AsyncThrowingStream<PassageStreamChunk, Error> {
+        AsyncThrowingStream { continuation in
+            let task = Task {
+                do {
+                    continuation.yield(.finished(try await translate(request)))
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+            continuation.onTermination = { @Sendable _ in
+                task.cancel()
+            }
+        }
+    }
 }
 
 public enum ProviderLookupPolicy: String, Codable, Equatable, Sendable {

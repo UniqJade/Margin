@@ -42,6 +42,20 @@ struct LookupPanelView: View {
     @ViewBuilder
     var body: some View {
         switch session.phase {
+        case let .streaming(partial):
+            PassageStreamingView(
+                originalText: session.selection,
+                partial: partial,
+                onCancel: session.cancel,
+                onDismiss: onDismiss.map { dismiss in
+                    {
+                        session.cancel()
+                        dismiss()
+                    }
+                },
+                onPreferredHeightChange: onPreferredHeightChange
+            )
+            .id(session.selection)
         case let .result(outcome):
             switch outcome.result {
             case .word:
@@ -67,6 +81,9 @@ struct LookupPanelView: View {
                     },
                     onRetry: session.retry,
                     onDismiss: onDismiss,
+                    initialReadingMode: .initial(
+                        didStream: session.didStreamCurrentLookup
+                    ),
                     onPreferredHeightChange: onPreferredHeightChange
                 )
             }
@@ -124,7 +141,7 @@ struct LookupPanelView: View {
                     Button("Cancel", action: session.cancel)
                 }
                 .padding(.vertical, 18)
-            case .result:
+            case .streaming, .result:
                 EmptyView()
             case let .failure(message):
                 VStack(alignment: .leading, spacing: 10) {
