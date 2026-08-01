@@ -98,15 +98,38 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
 
     func testReadingAvailabilityFollowsAlignmentBlockCount() {
         let noAlignment = PassageReadingAvailability(alignmentBlockCount: 0)
-        let naturalOnly = PassageReadingAvailability(alignmentBlockCount: 1)
+        let singleBlock = PassageReadingAvailability(alignmentBlockCount: 1)
         let switchable = PassageReadingAvailability(alignmentBlockCount: 2)
 
+        XCTAssertEqual(noAlignment, .naturalOnly)
+        XCTAssertEqual(singleBlock, .singleBlock)
+        XCTAssertEqual(switchable, .switchable)
         XCTAssertFalse(noAlignment.showsModePicker)
-        XCTAssertFalse(naturalOnly.showsModePicker)
+        XCTAssertFalse(singleBlock.showsModePicker)
         XCTAssertTrue(switchable.showsModePicker)
     }
 
-    func testUnavailableAndSingleBlockAvailabilityClampToNaturalTranslation() {
+    func testInitialReadingModeFollowsWhetherLookupStreamed() {
+        XCTAssertEqual(
+            PassageReadingMode.initial(didStream: false),
+            .naturalTranslation
+        )
+        XCTAssertEqual(
+            PassageReadingMode.initial(didStream: true),
+            .bilingualView
+        )
+    }
+
+    func testNoAlignmentOverridesStreamedBilingualInitialMode() {
+        XCTAssertEqual(
+            PassageReadingAvailability.naturalOnly.effectiveMode(
+                for: .initial(didStream: true)
+            ),
+            .naturalTranslation
+        )
+    }
+
+    func testSingleBlockPreservesWhetherLookupStreamed() {
         XCTAssertEqual(
             PassageReadingAvailability(alignmentBlockCount: 0)
                 .effectiveMode(for: .bilingualView),
@@ -114,8 +137,13 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
         )
         XCTAssertEqual(
             PassageReadingAvailability(alignmentBlockCount: 1)
-                .effectiveMode(for: .bilingualView),
+                .effectiveMode(for: .initial(didStream: false)),
             .naturalTranslation
+        )
+        XCTAssertEqual(
+            PassageReadingAvailability(alignmentBlockCount: 1)
+                .effectiveMode(for: .initial(didStream: true)),
+            .bilingualView
         )
     }
 
@@ -132,7 +160,7 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
         )
     }
 
-    func testSingleBlockActionTextUsesNaturalTranslation() {
+    func testSingleBlockActionTextFollowsWhetherLookupStreamed() {
         let original = "One long grammatical sentence."
         let passage = PassageLookupResult(
             alignmentBlocks: [
@@ -141,16 +169,29 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
             nuanceNote: nil,
             literalGloss: nil
         )
-        let effectiveMode = PassageReadingAvailability(alignmentBlockCount: 1)
-            .effectiveMode(for: .bilingualView)
+        let availability = PassageReadingAvailability(alignmentBlockCount: 1)
+        let blockingMode = availability.effectiveMode(
+            for: .initial(didStream: false)
+        )
+        let streamingMode = availability.effectiveMode(
+            for: .initial(didStream: true)
+        )
 
         XCTAssertEqual(
             PassageVisibleContent.text(
-                for: effectiveMode,
+                for: blockingMode,
                 originalText: original,
                 passage: passage
             ),
             passage.translation
+        )
+        XCTAssertEqual(
+            PassageVisibleContent.text(
+                for: streamingMode,
+                originalText: original,
+                passage: passage
+            ),
+            "\(original)\n\(passage.translation)"
         )
     }
 
@@ -177,6 +218,13 @@ final class OriginalTextFoldPolicyTests: XCTestCase {
             ["First sentence.", "Second sentence. Third sentence."]
         )
         XCTAssertEqual(blocks.map(\.translation), ["第一句。", "第二、三句。"])
+        XCTAssertEqual(
+            blocks,
+            PassageAlignmentPresentation.blocks(
+                originalText: original,
+                alignmentBlocks: passage.alignmentBlocks
+            )
+        )
     }
 
     private func makePassageIdentity(

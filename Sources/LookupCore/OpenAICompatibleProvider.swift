@@ -2,6 +2,17 @@ import Foundation
 
 public protocol HTTPTransport: Sendable {
     func data(for request: URLRequest) async throws -> (Data, HTTPURLResponse)
+    func streamLines(
+        for request: URLRequest
+    ) async throws -> (HTTPURLResponse, AsyncThrowingStream<String, Error>)
+}
+
+public extension HTTPTransport {
+    func streamLines(
+        for request: URLRequest
+    ) async throws -> (HTTPURLResponse, AsyncThrowingStream<String, Error>) {
+        throw TranslationProviderError.invalidResponse
+    }
 }
 
 public struct URLSessionTransport: HTTPTransport {
@@ -13,6 +24,36 @@ public struct URLSessionTransport: HTTPTransport {
             throw TranslationProviderError.invalidResponse
         }
         return (data, httpResponse)
+    }
+
+    public func streamLines(
+        for request: URLRequest
+    ) async throws -> (HTTPURLResponse, AsyncThrowingStream<String, Error>) {
+        let (bytes, response) = try await URLSession.shared.bytes(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw TranslationProviderError.invalidResponse
+        }
+        let stream = AsyncThrowingStream<String, Error> { continuation in
+            let task = Task {
+                do {
+                    for try await line in bytes.lines {
+                        try Task.checkCancellation()
+                        continuation.yield(line)
+                    }
+                    continuation.finish()
+                } catch is CancellationError {
+                    continuation.finish(throwing: CancellationError())
+                } catch let error as URLError where error.code == .cancelled {
+                    continuation.finish(throwing: CancellationError())
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+            continuation.onTermination = { @Sendable _ in
+                task.cancel()
+            }
+        }
+        return (httpResponse, stream)
     }
 }
 
@@ -55,17 +96,20 @@ struct ProviderCapabilities: Equatable, Sendable {
     let responseFormat: ProviderResponseFormat
     let supportsThinkingToggle: Bool
     let passageRepairStrategy: PassageRepairStrategy
+    let supportsStreaming: Bool
 
     static let deepSeek = Self(
         responseFormat: .jsonObject,
         supportsThinkingToggle: true,
-        passageRepairStrategy: .naturalTranslation
+        passageRepairStrategy: .naturalTranslation,
+        supportsStreaming: true
     )
 
     static let genericOpenAICompatible = Self(
         responseFormat: .jsonSchema,
         supportsThinkingToggle: false,
-        passageRepairStrategy: .repeatStructuredRequest
+        passageRepairStrategy: .repeatStructuredRequest,
+        supportsStreaming: false
     )
 }
 
@@ -139,8 +183,10 @@ enum OpenAIRequestBuilder {
             capabilities: ProviderCapabilities(
                 responseFormat: responseFormat,
                 supportsThinkingToggle: false,
-                passageRepairStrategy: .repeatStructuredRequest
-            )
+                passageRepairStrategy: .repeatStructuredRequest,
+                supportsStreaming: false
+            ),
+            stream: false
         )
     }
 
@@ -148,7 +194,8 @@ enum OpenAIRequestBuilder {
         for request: LookupRequest,
         model: String,
         stage: ProviderRequestStage,
-        capabilities: ProviderCapabilities
+        capabilities: ProviderCapabilities,
+        stream: Bool = false
     ) throws -> Data {
         let messages = try messages(for: request, stage: stage).map {
             ["role": $0.role, "content": $0.content]
@@ -179,6 +226,9 @@ enum OpenAIRequestBuilder {
             if !thinkingEnabled { payload["temperature"] = 0.2 }
         } else {
             payload["temperature"] = 0.2
+        }
+        if stream {
+            payload["stream"] = true
         }
         return try JSONSerialization.data(withJSONObject: payload)
     }
@@ -396,22 +446,202 @@ public struct OpenAICompatibleProvider: TranslationProvider {
         }
     }
 
+    public func supportsStreaming(for request: LookupRequest) -> Bool {
+        guard request.kind == .passage,
+              configuration.lookupPolicy == .standard else {
+            return false
+        }
+        let endpoint = ProviderCompatibility.chatCompletionsEndpoint(
+            from: configuration.endpoint
+        )
+        return ProviderCompatibility.capabilities(for: endpoint).supportsStreaming
+    }
+
+    public func translateStreaming(
+        _ request: LookupRequest
+    ) -> AsyncThrowingStream<PassageStreamChunk, Error> {
+        guard supportsStreaming(for: request) else {
+            return AsyncThrowingStream { continuation in
+                let task = Task {
+                    do {
+                        continuation.yield(.finished(try await translate(request)))
+                        continuation.finish()
+                    } catch {
+                        continuation.finish(throwing: error)
+                    }
+                }
+                continuation.onTermination = { @Sendable _ in
+                    task.cancel()
+                }
+            }
+        }
+
+        return AsyncThrowingStream { continuation in
+            let task = Task {
+                do {
+                    try Task.checkCancellation()
+                    guard !configuration.model.trimmingCharacters(
+                        in: .whitespacesAndNewlines
+                    ).isEmpty,
+                    !configuration.apiKey.trimmingCharacters(
+                        in: .whitespacesAndNewlines
+                    ).isEmpty else {
+                        throw TranslationProviderError.misconfigured
+                    }
+
+                    let endpoint = ProviderCompatibility.chatCompletionsEndpoint(
+                        from: configuration.endpoint
+                    )
+                    let capabilities = ProviderCompatibility.capabilities(for: endpoint)
+                    let urlRequest = try makeRequest(
+                        lookup: request,
+                        stage: .initial,
+                        capabilities: capabilities,
+                        stream: true
+                    )
+                    let response: HTTPURLResponse
+                    let lines: AsyncThrowingStream<String, Error>
+                    do {
+                        (response, lines) = try await transport.streamLines(for: urlRequest)
+                    } catch is CancellationError {
+                        throw CancellationError()
+                    } catch let error as URLError where error.code == .cancelled {
+                        throw CancellationError()
+                    } catch let error as TranslationProviderError {
+                        throw error
+                    } catch {
+                        throw TranslationProviderError.networkUnavailable
+                    }
+                    try validateHTTPStatus(response, stage: .initial)
+
+                    var parser = IncrementalPassageParser()
+                    var previousSnapshot = parser.snapshot
+                    var content = ""
+                    var sawDone = false
+                    var metadata = ProviderCompletionMetadata()
+
+                    do {
+                        for try await rawLine in lines {
+                            try Task.checkCancellation()
+                            let line = rawLine.trimmingCharacters(
+                                in: .whitespacesAndNewlines
+                            )
+                            guard line.hasPrefix("data:") else { continue }
+                            let dataText = line.dropFirst(5).trimmingCharacters(
+                                in: .whitespacesAndNewlines
+                            )
+                            if dataText == "[DONE]" {
+                                sawDone = true
+                                break
+                            }
+                            guard let data = dataText.data(using: .utf8) else {
+                                throw ProviderOutputFailure(issue: .malformedEnvelope)
+                            }
+                            let chunk: StreamingChatCompletionChunk
+                            do {
+                                chunk = try JSONDecoder().decode(
+                                    StreamingChatCompletionChunk.self,
+                                    from: data
+                                )
+                            } catch {
+                                throw ProviderOutputFailure(issue: .malformedEnvelope)
+                            }
+                            if let finishReason = chunk.choices.first?.finishReason {
+                                metadata.finishReason = finishReason
+                            }
+                            if let usage = chunk.usage {
+                                metadata.promptTokens = usage.promptTokens
+                                metadata.completionTokens = usage.completionTokens
+                            }
+                            guard let delta = chunk.choices.first?.delta.content,
+                                  !delta.isEmpty else {
+                                continue
+                            }
+                            content.append(delta)
+                            parser.append(delta)
+                            if !parser.isDegraded, parser.snapshot != previousSnapshot {
+                                previousSnapshot = parser.snapshot
+                                continuation.yield(.partial(parser.snapshot))
+                            }
+                        }
+                    } catch is CancellationError {
+                        throw CancellationError()
+                    } catch let error as URLError where error.code == .cancelled {
+                        throw CancellationError()
+                    }
+
+                    try Task.checkCancellation()
+                    guard sawDone else {
+                        throw ProviderOutputFailure(
+                            issue: .truncatedResponse,
+                            metadata: metadata
+                        )
+                    }
+                    if let finishReason = metadata.finishReason,
+                       finishReason != "stop" {
+                        throw ProviderOutputFailure(
+                            issue: .truncatedResponse,
+                            metadata: metadata
+                        )
+                    }
+                    let trimmed = content.trimmingCharacters(
+                        in: .whitespacesAndNewlines
+                    )
+                    guard !trimmed.isEmpty else {
+                        throw ProviderOutputFailure(
+                            issue: .emptyResponse,
+                            metadata: metadata
+                        )
+                    }
+                    let result = try decodePayload(
+                        from: Data(trimmed.utf8),
+                        expectedRequest: request,
+                        metadata: metadata,
+                        finishReason: metadata.finishReason
+                    )
+                    configuration.eventHandler(.diagnostic(TranslationDiagnostic(
+                        stage: ProviderRequestStage.initial.rawValue,
+                        outcome: .success,
+                        statusCode: response.statusCode,
+                        finishReason: metadata.finishReason,
+                        promptTokens: metadata.promptTokens,
+                        completionTokens: metadata.completionTokens
+                    )))
+                    continuation.yield(.finished(result))
+                    continuation.finish()
+                } catch is CancellationError {
+                    continuation.finish(throwing: CancellationError())
+                } catch let failure as ProviderOutputFailure {
+                    configuration.eventHandler(.diagnostic(TranslationDiagnostic(
+                        stage: ProviderRequestStage.initial.rawValue,
+                        outcome: .failure,
+                        finishReason: failure.metadata.finishReason,
+                        issue: failure.issue,
+                        detail: failure.detail,
+                        promptTokens: failure.metadata.promptTokens,
+                        completionTokens: failure.metadata.completionTokens
+                    )))
+                    continuation.finish(throwing: failure)
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+            continuation.onTermination = { @Sendable _ in
+                task.cancel()
+            }
+        }
+    }
+
     private func perform(
         _ lookup: LookupRequest,
         stage: ProviderRequestStage,
         capabilities: ProviderCapabilities
     ) async throws -> LookupResult {
-        let endpoint = ProviderCompatibility.chatCompletionsEndpoint(from: configuration.endpoint)
-        var request = URLRequest(url: endpoint)
-        request.httpMethod = "POST"
-        request.timeoutInterval = stage.isNaturalOnly ? 30 : 15
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(configuration.apiKey)", forHTTPHeaderField: "Authorization")
-        request.httpBody = try OpenAIRequestBuilder.body(
-            for: lookup,
-            model: configuration.model,
+        let request = try makeRequest(
+            lookup: lookup,
             stage: stage,
-            capabilities: capabilities
+            capabilities: capabilities,
+            stream: false
         )
 
         let data: Data
@@ -426,22 +656,7 @@ public struct OpenAICompatibleProvider: TranslationProvider {
             throw TranslationProviderError.networkUnavailable
         }
 
-        switch response.statusCode {
-        case 200..<300:
-            break
-        case 401, 403:
-            emitHTTPFailure(stage: stage, statusCode: response.statusCode)
-            throw TranslationProviderError.invalidCredentials
-        case 429:
-            emitHTTPFailure(stage: stage, statusCode: response.statusCode)
-            throw TranslationProviderError.rateLimited
-        case 500..<600:
-            emitHTTPFailure(stage: stage, statusCode: response.statusCode)
-            throw TranslationProviderError.serviceUnavailable
-        default:
-            emitHTTPFailure(stage: stage, statusCode: response.statusCode)
-            throw TranslationProviderError.invalidResponse
-        }
+        try validateHTTPStatus(response, stage: stage)
 
         do {
             let decoded = try decodeResult(from: data, expectedRequest: lookup)
@@ -466,6 +681,55 @@ public struct OpenAICompatibleProvider: TranslationProvider {
                 completionTokens: failure.metadata.completionTokens
             )))
             throw failure
+        }
+    }
+
+    private func makeRequest(
+        lookup: LookupRequest,
+        stage: ProviderRequestStage,
+        capabilities: ProviderCapabilities,
+        stream: Bool
+    ) throws -> URLRequest {
+        let endpoint = ProviderCompatibility.chatCompletionsEndpoint(
+            from: configuration.endpoint
+        )
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.timeoutInterval = stage.isNaturalOnly ? 30 : 15
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(
+            "Bearer \(configuration.apiKey)",
+            forHTTPHeaderField: "Authorization"
+        )
+        request.httpBody = try OpenAIRequestBuilder.body(
+            for: lookup,
+            model: configuration.model,
+            stage: stage,
+            capabilities: capabilities,
+            stream: stream
+        )
+        return request
+    }
+
+    private func validateHTTPStatus(
+        _ response: HTTPURLResponse,
+        stage: ProviderRequestStage
+    ) throws {
+        switch response.statusCode {
+        case 200..<300:
+            return
+        case 401, 403:
+            emitHTTPFailure(stage: stage, statusCode: response.statusCode)
+            throw TranslationProviderError.invalidCredentials
+        case 429:
+            emitHTTPFailure(stage: stage, statusCode: response.statusCode)
+            throw TranslationProviderError.rateLimited
+        case 500..<600:
+            emitHTTPFailure(stage: stage, statusCode: response.statusCode)
+            throw TranslationProviderError.serviceUnavailable
+        default:
+            emitHTTPFailure(stage: stage, statusCode: response.statusCode)
+            throw TranslationProviderError.invalidResponse
         }
     }
 
@@ -497,11 +761,26 @@ public struct OpenAICompatibleProvider: TranslationProvider {
                 metadata: metadata
             )
         }
+        let result = try decodePayload(
+            from: contentData,
+            expectedRequest: expectedRequest,
+            metadata: metadata,
+            finishReason: choice.finishReason
+        )
+        return DecodedProviderResult(result: result, metadata: metadata)
+    }
+
+    private func decodePayload(
+        from contentData: Data,
+        expectedRequest: LookupRequest,
+        metadata: ProviderCompletionMetadata,
+        finishReason: String?
+    ) throws -> LookupResult {
         do {
             _ = try JSONSerialization.jsonObject(with: contentData)
         } catch {
             throw ProviderOutputFailure(
-                issue: choiceFinishIssue(choice.finishReason, fallback: .malformedJSON),
+                issue: choiceFinishIssue(finishReason, fallback: .malformedJSON),
                 metadata: metadata
             )
         }
@@ -511,7 +790,7 @@ public struct OpenAICompatibleProvider: TranslationProvider {
             payload = try JSONDecoder().decode(ProviderPayload.self, from: contentData)
         } catch {
             throw ProviderOutputFailure(
-                issue: choiceFinishIssue(choice.finishReason, fallback: .invalidStructure),
+                issue: choiceFinishIssue(finishReason, fallback: .invalidStructure),
                 metadata: metadata
             )
         }
@@ -568,15 +847,12 @@ public struct OpenAICompatibleProvider: TranslationProvider {
                 }
                 return WordPartOfSpeech(name: name, senses: senses)
             }
-            return DecodedProviderResult(
-                result: .word(WordLookupResult(
-                    headword: headword,
-                    pronunciations: pronunciations,
-                    partsOfSpeech: partsOfSpeech,
-                    alternatives: (payload.alternatives ?? []).compactMap(\.nonEmpty)
-                )),
-                metadata: metadata
-            )
+            return .word(WordLookupResult(
+                headword: headword,
+                pronunciations: pronunciations,
+                partsOfSpeech: partsOfSpeech,
+                alternatives: (payload.alternatives ?? []).compactMap(\.nonEmpty)
+            ))
         case (.passage, .passage):
             if let providerBlocks = payload.alignmentBlocks {
                 let blocks = try providerBlocks.map { block in
@@ -613,7 +889,7 @@ public struct OpenAICompatibleProvider: TranslationProvider {
                 ) else {
                     throw ProviderOutputFailure(issue: .invalidLanguage, metadata: metadata)
                 }
-                return DecodedProviderResult(result: .passage(passage), metadata: metadata)
+                return .passage(passage)
             }
 
             guard let translation = payload.translation?.nonEmpty else {
@@ -625,14 +901,11 @@ public struct OpenAICompatibleProvider: TranslationProvider {
             ) else {
                 throw ProviderOutputFailure(issue: .invalidLanguage, metadata: metadata)
             }
-            return DecodedProviderResult(
-                result: .passage(PassageLookupResult(
-                    translation: translation,
-                    nuanceNote: payload.nuanceNote?.nonEmpty,
-                    literalGloss: payload.literalGloss?.nonEmpty
-                )),
-                metadata: metadata
-            )
+            return .passage(PassageLookupResult(
+                translation: translation,
+                nuanceNote: payload.nuanceNote?.nonEmpty,
+                literalGloss: payload.literalGloss?.nonEmpty
+            ))
         default:
             throw ProviderOutputFailure(issue: .invalidStructure, metadata: metadata)
         }
@@ -683,6 +956,41 @@ private struct ChatCompletionEnvelope: Decodable {
 
         enum CodingKeys: String, CodingKey {
             case message
+            case finishReason = "finish_reason"
+        }
+    }
+
+    struct Usage: Decodable {
+        let promptTokens: Int?
+        let completionTokens: Int?
+
+        enum CodingKeys: String, CodingKey {
+            case promptTokens = "prompt_tokens"
+            case completionTokens = "completion_tokens"
+        }
+    }
+
+    let choices: [Choice]
+    let usage: Usage?
+}
+
+private struct StreamingChatCompletionChunk: Decodable {
+    struct Choice: Decodable {
+        struct Delta: Decodable {
+            let content: String?
+            let reasoningContent: String?
+
+            enum CodingKeys: String, CodingKey {
+                case content
+                case reasoningContent = "reasoning_content"
+            }
+        }
+
+        let delta: Delta
+        let finishReason: String?
+
+        enum CodingKeys: String, CodingKey {
+            case delta
             case finishReason = "finish_reason"
         }
     }

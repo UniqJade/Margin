@@ -40,6 +40,45 @@ public actor LookupEngine {
     }
 
     public func lookup(selection: String) async throws -> LookupOutcome {
+        var completed: LookupOutcome?
+        let stream = lookupStreaming(selection: selection)
+        for try await event in stream {
+            if case let .completed(outcome) = event {
+                completed = outcome
+            }
+        }
+        try Task.checkCancellation()
+        guard let completed else {
+            throw TranslationProviderError.invalidResponse
+        }
+        return completed
+    }
+
+    public func lookupStreaming(
+        selection: String
+    ) -> AsyncThrowingStream<LookupStreamEvent, Error> {
+        AsyncThrowingStream { continuation in
+            let task = Task {
+                do {
+                    try await performLookupStreaming(
+                        selection: selection,
+                        continuation: continuation
+                    )
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+            continuation.onTermination = { @Sendable _ in
+                task.cancel()
+            }
+        }
+    }
+
+    private func performLookupStreaming(
+        selection: String,
+        continuation: AsyncThrowingStream<LookupStreamEvent, Error>.Continuation
+    ) async throws {
         let request = try LookupRequest(selection: selection)
         let key = LookupCacheKey.make(request: request, providerIdentifier: providerIdentifier)
 
@@ -50,13 +89,14 @@ public actor LookupEngine {
             if cleaned != cached {
                 try await cacheBestEffort(cleaned, for: key)
             }
-            return LookupOutcome(
+            continuation.yield(.completed(LookupOutcome(
                 id: UUID(),
                 request: request,
                 result: cleaned,
                 providerName: provider.displayName,
                 wasCached: true
-            )
+            )))
+            return
         }
 
         if let legacyKey = legacyCacheKey(for: selection, canonicalRequest: request),
@@ -64,27 +104,56 @@ public actor LookupEngine {
             try Task.checkCancellation()
             let cleaned = AppleBooksAttributionCleaner.removingFooter(from: legacyCached)
             try await cacheBestEffort(cleaned, for: key)
-            return LookupOutcome(
+            continuation.yield(.completed(LookupOutcome(
                 id: UUID(),
                 request: request,
                 result: cleaned,
                 providerName: provider.displayName,
                 wasCached: true
-            )
+            )))
+            return
         }
 
-        let providerResult = try await provider.translate(request)
+        let providerResult: LookupResult
+        if request.kind == .passage, provider.supportsStreaming(for: request) {
+            do {
+                var finishedResult: LookupResult?
+                for try await chunk in provider.translateStreaming(request) {
+                    try Task.checkCancellation()
+                    switch chunk {
+                    case let .partial(partial):
+                        continuation.yield(.partial(partial))
+                    case let .finished(result):
+                        finishedResult = result
+                    }
+                }
+                guard let finishedResult else {
+                    throw TranslationProviderError.invalidResponse
+                }
+                providerResult = finishedResult
+            } catch {
+                if Self.isCancellation(error) {
+                    throw CancellationError()
+                }
+                try Task.checkCancellation()
+                continuation.yield(.fallback)
+                providerResult = try await translateBlocking(request)
+            }
+        } else {
+            providerResult = try await translateBlocking(request)
+        }
+
         try Task.checkCancellation()
         let result = AppleBooksAttributionCleaner.removingFooter(from: providerResult)
         try await cacheBestEffort(result, for: key)
         try Task.checkCancellation()
-        return LookupOutcome(
+        continuation.yield(.completed(LookupOutcome(
             id: UUID(),
             request: request,
             result: result,
             providerName: provider.displayName,
             wasCached: false
-        )
+        )))
     }
 
     private func cacheBestEffort(_ result: LookupResult, for key: String) async throws {
@@ -94,6 +163,17 @@ public actor LookupEngine {
             throw CancellationError()
         } catch {
             // Cache persistence is best effort and must not fail a successful lookup.
+        }
+    }
+
+    private func translateBlocking(_ request: LookupRequest) async throws -> LookupResult {
+        do {
+            return try await provider.translate(request)
+        } catch {
+            if Self.isCancellation(error) {
+                throw CancellationError()
+            }
+            throw error
         }
     }
 
@@ -118,4 +198,13 @@ public actor LookupEngine {
         )
     }
 
+    private static func isCancellation(_ error: Error) -> Bool {
+        if error is CancellationError {
+            return true
+        }
+        if let urlError = error as? URLError, urlError.code == .cancelled {
+            return true
+        }
+        return error as? TranslationProviderError == .cancelled
+    }
 }

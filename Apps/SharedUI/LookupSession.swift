@@ -10,6 +10,7 @@ final class LookupSession: ObservableObject {
     enum Phase: Equatable {
         case idle
         case loading
+        case streaming(PassagePartial)
         case result(LookupOutcome)
         case failure(String)
     }
@@ -21,6 +22,7 @@ final class LookupSession: ObservableObject {
 
     @Published var selection = ""
     @Published private(set) var phase: Phase = .idle
+    @Published private(set) var didStreamCurrentLookup = false
     @Published private(set) var historyEntries: [LookupHistoryEntry] = []
     @Published private(set) var cacheUsageBytes = 0
     @Published private(set) var appearance: MarginAppearance
@@ -37,6 +39,9 @@ final class LookupSession: ObservableObject {
     private let diagnosticStore: TranslationDiagnosticStore
     private let providerFactory: ProviderFactory
     private let lookupOperation: ((String) async throws -> LookupOutcome)?
+    private let lookupStreamOperation: ((
+        String
+    ) -> AsyncThrowingStream<LookupStreamEvent, Error>)?
     private let historySnapshotOperation: (() async throws -> HistorySnapshot)?
     private var lookupTask: Task<Void, Never>?
     private var lookupGeneration: UInt = 0
@@ -47,6 +52,9 @@ final class LookupSession: ObservableObject {
         vault: APIKeyVault = APIKeyVault(store: KeychainAPIKeyStore(service: SharedConfiguration.keychainService)),
         providerFactory: @escaping ProviderFactory = { OpenAICompatibleProvider(configuration: $0) },
         lookupOperation: ((String) async throws -> LookupOutcome)? = nil,
+        lookupStreamOperation: ((
+            String
+        ) -> AsyncThrowingStream<LookupStreamEvent, Error>)? = nil,
         historySnapshotOperation: (() async throws -> HistorySnapshot)? = nil,
         loadInitialHistory: Bool = true,
         storageDirectory: URL = SharedConfiguration.storageDirectory
@@ -64,6 +72,7 @@ final class LookupSession: ObservableObject {
             fileURL: storageDirectory.appending(path: "diagnostics.json")
         )
         self.lookupOperation = lookupOperation
+        self.lookupStreamOperation = lookupStreamOperation
         self.historySnapshotOperation = historySnapshotOperation
         if loadInitialHistory {
             Task {
@@ -90,6 +99,7 @@ final class LookupSession: ObservableObject {
         capturedSelection: String? = nil
     ) {
         let generation = invalidateLookup()
+        didStreamCurrentLookup = false
         loadingProgress = .readingContext
         failureTechnicalDetail = nil
         phase = .loading
@@ -98,15 +108,23 @@ final class LookupSession: ObservableObject {
         lookupTask = Task { [weak self] in
             guard let self else { return }
             do {
-                let outcome: LookupOutcome
-                if let lookupOperation = self.lookupOperation {
-                    outcome = try await lookupOperation(displayedSelection)
+                if let lookupStreamOperation = self.lookupStreamOperation {
+                    try await self.consume(
+                        lookupStreamOperation(displayedSelection),
+                        generation: generation
+                    )
+                } else if let lookupOperation = self.lookupOperation {
+                    let outcome = try await lookupOperation(displayedSelection)
+                    guard self.isCurrent(generation) else { return }
+                    self.retryLookupPolicy = .standard
+                    self.phase = .result(outcome)
                 } else {
-                    outcome = try await self.performLookup(selection: providerSelection, policy: policy)
+                    let stream = try await self.performLookupStreaming(
+                        selection: providerSelection,
+                        policy: policy
+                    )
+                    try await self.consume(stream, generation: generation)
                 }
-                guard self.isCurrent(generation) else { return }
-                self.retryLookupPolicy = .standard
-                self.phase = .result(outcome)
             } catch is CancellationError {
                 guard self.isCurrent(generation) else { return }
                 self.phase = .idle
@@ -285,6 +303,67 @@ final class LookupSession: ObservableObject {
             cache: cache
         )
         return try await engine.lookup(selection: selection)
+    }
+
+    private func performLookupStreaming(
+        selection: String,
+        policy: ProviderLookupPolicy
+    ) async throws -> AsyncThrowingStream<LookupStreamEvent, Error> {
+        guard let endpoint = URL(string: preferences.endpoint), endpoint.scheme == "https",
+              !preferences.model.isEmpty,
+              let apiKey = try await Task.detached(operation: { [vault] in try vault.read() }).value,
+              !apiKey.isEmpty else {
+            throw TranslationProviderError.misconfigured
+        }
+        let configuration = OpenAICompatibleProvider.Configuration(
+            endpoint: endpoint,
+            model: preferences.model,
+            apiKey: apiKey,
+            lookupPolicy: policy,
+            eventHandler: { [weak self] event in
+                Task { @MainActor [weak self] in
+                    self?.receiveProviderEvent(event)
+                }
+            }
+        )
+        let provider = providerFactory(configuration)
+        let engine = LookupEngine(
+            provider: provider,
+            providerIdentifier: TranslationContract.providerIdentifier(
+                endpoint: endpoint,
+                model: preferences.model
+            ),
+            cache: cache
+        )
+        return await engine.lookupStreaming(selection: selection)
+    }
+
+    private func consume(
+        _ stream: AsyncThrowingStream<LookupStreamEvent, Error>,
+        generation: UInt
+    ) async throws {
+        var completed = false
+        for try await event in stream {
+            try Task.checkCancellation()
+            guard isCurrent(generation) else { return }
+            switch event {
+            case let .partial(partial):
+                didStreamCurrentLookup = true
+                phase = .streaming(partial)
+            case .fallback:
+                didStreamCurrentLookup = false
+                loadingProgress = .readingContext
+                phase = .loading
+            case let .completed(outcome):
+                completed = true
+                retryLookupPolicy = .standard
+                phase = .result(outcome)
+            }
+        }
+        try Task.checkCancellation()
+        guard completed else {
+            throw TranslationProviderError.invalidResponse
+        }
     }
 
     private func loadHistorySnapshot() async throws -> HistorySnapshot {

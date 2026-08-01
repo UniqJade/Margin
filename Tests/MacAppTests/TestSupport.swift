@@ -8,12 +8,16 @@ import XCTest
 extension XCTestCase {
     func makeIsolatedSession(
         lookupOperation: ((String) async throws -> LookupOutcome)? = nil,
+        lookupStreamOperation: ((
+            String
+        ) -> AsyncThrowingStream<LookupStreamEvent, Error>)? = nil,
         historySnapshotOperation: (() async throws -> LookupSession.HistorySnapshot)? = nil
     ) -> LookupSession {
         LookupSession(
             defaults: makeTemporaryDefaults(),
             vault: APIKeyVault(store: TestSecretStore()),
             lookupOperation: lookupOperation,
+            lookupStreamOperation: lookupStreamOperation,
             historySnapshotOperation: historySnapshotOperation,
             loadInitialHistory: false,
             storageDirectory: makeTemporaryStorageDirectory()
