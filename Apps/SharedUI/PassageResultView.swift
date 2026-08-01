@@ -31,10 +31,18 @@ enum PassageReadingMode: String, CaseIterable {
 
 enum PassageReadingAvailability: Equatable {
     case naturalOnly
+    case singleBlock
     case switchable
 
     init(alignmentBlockCount: Int) {
-        self = alignmentBlockCount >= 2 ? .switchable : .naturalOnly
+        switch alignmentBlockCount {
+        case ...0:
+            self = .naturalOnly
+        case 1:
+            self = .singleBlock
+        default:
+            self = .switchable
+        }
     }
 
     var showsModePicker: Bool {
@@ -42,7 +50,12 @@ enum PassageReadingAvailability: Equatable {
     }
 
     func effectiveMode(for requestedMode: PassageReadingMode) -> PassageReadingMode {
-        self == .switchable ? requestedMode : .naturalTranslation
+        switch self {
+        case .naturalOnly:
+            .naturalTranslation
+        case .singleBlock, .switchable:
+            requestedMode
+        }
     }
 }
 

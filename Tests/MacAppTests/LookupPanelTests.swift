@@ -266,6 +266,36 @@ final class LookupPanelTests: XCTestCase {
         XCTAssertEqual(inProgressHeight, completedHeight, accuracy: 0.5)
     }
 
+    func testSingleBlockSharedLayoutMatchesAfterSettlingToBilingual() async throws {
+        let originalText = "First sentence. Second sentence."
+        let block = PassageAlignmentBlock(
+            sourceSentenceIDs: [1, 2],
+            translation: "这是同一段用于测量的中文译文，完成后仍应保持双语对照布局。"
+        )
+        let streamingHeight = try await reportedStreamingHeight(
+            originalText: originalText,
+            partial: PassagePartial(
+                completedBlocks: [block],
+                inProgress: nil
+            )
+        )
+        let passage = PassageLookupResult(
+            alignmentBlocks: [block],
+            nuanceNote: nil,
+            literalGloss: nil
+        )
+        let outcome = try await makePassageOutcome(
+            selection: originalText,
+            passage: passage
+        )
+        let settledHeight = try await reportedPassageResultHeight(
+            originalText: originalText,
+            outcome: outcome
+        )
+
+        XCTAssertEqual(streamingHeight, settledHeight, accuracy: 0.5)
+    }
+
     private func reportedStreamingHeight(
         originalText: String,
         partial: PassagePartial
@@ -288,21 +318,92 @@ final class LookupPanelTests: XCTestCase {
         )
         host.layoutSubtreeIfNeeded()
 
+        return try await stableReportedHeight {
+            reportedHeights.last
+        }
+    }
+
+    private func reportedPassageResultHeight(
+        originalText: String,
+        outcome: LookupOutcome
+    ) async throws -> CGFloat {
+        var reportedHeights: [CGFloat] = []
+        let rootView = PassageResultView(
+            originalText: originalText,
+            outcome: outcome,
+            isSaved: false,
+            onToggleSaved: {},
+            onRetry: {},
+            onDismiss: nil,
+            initialReadingMode: .bilingualView,
+            onPreferredHeightChange: { reportedHeights.append($0) }
+        )
+        .environment(\._accessibilityReduceMotion, false)
+        let host = NSHostingView(rootView: rootView)
+        host.frame = NSRect(
+            x: 0,
+            y: 0,
+            width: LookupPanelSizing.preferredWidth,
+            height: LookupPanelSizing.maximumContentHeight
+        )
+        host.layoutSubtreeIfNeeded()
+
+        return try await stableReportedHeight {
+            reportedHeights.last
+        }
+    }
+
+    private func stableReportedHeight(
+        currentHeight: @escaping @MainActor () -> CGFloat?
+    ) async throws -> CGFloat {
         let clock = ContinuousClock()
         let deadline = clock.now.advanced(by: .seconds(2))
-        while reportedHeights.isEmpty {
-            guard clock.now < deadline else {
-                throw LookupPanelViewTestTimeout.deadlineExceeded
+        var lastHeight: CGFloat?
+        var stableSince: ContinuousClock.Instant?
+
+        while clock.now < deadline {
+            if let height = currentHeight() {
+                if height != lastHeight {
+                    lastHeight = height
+                    stableSince = clock.now
+                } else if let stableSince,
+                          stableSince.duration(to: clock.now) >= .milliseconds(200) {
+                    return height
+                }
             }
-            await Task.yield()
+            try await Task.sleep(for: .milliseconds(10))
         }
-        try await Task.sleep(for: .milliseconds(50))
-        return try XCTUnwrap(reportedHeights.last)
+
+        throw LookupPanelViewTestTimeout.deadlineExceeded
+    }
+
+    private func makePassageOutcome(
+        selection: String,
+        passage: PassageLookupResult
+    ) async throws -> LookupOutcome {
+        let directory = makeTemporaryStorageDirectory()
+        let engine = LookupEngine(
+            provider: PassageFixtureProvider(passage: passage),
+            providerIdentifier: "passage-fixture",
+            cache: LookupCache(fileURL: directory.appending(path: "cache.json"))
+        )
+        return try await engine.lookup(selection: selection)
     }
 }
 
 private enum LookupPanelViewTestTimeout: Error {
     case deadlineExceeded
+}
+
+private struct PassageFixtureProvider: TranslationProvider {
+    // Completion-only metadata is intentionally omitted so the geometry test
+    // isolates the shared chrome and alignment block that must not settle.
+    let displayName = ""
+    let passage: PassageLookupResult
+
+    func translate(_ request: LookupRequest) async throws -> LookupResult {
+        .passage(passage)
+    }
 }
 
 private extension NSRect {
